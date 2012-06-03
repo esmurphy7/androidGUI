@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="DataStyle" parent="@android:style/TextAppearance.Medium">
+        <item name="android:text">@string/data_default</item>
+        <item name="android:layout_width">0dip</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="LabelStyle" parent="@android:style/TextAppearance.Medium" />
+
+    <style name="OddLabelStyle" parent="@style/LabelStyle">
+        <item name="android:background">#333333</item>
+    </style>
+
+    <style name="EvenLabelStyle" parent="@style/LabelStyle">
+        <item name="android:background">#000000</item>
+    </style>
+
+    <style name="HeaderStyle" parent="@android:style/TextAppearance.Medium" />
+
+    <style name="SubHeaderStyle" parent="@android:style/TextAppearance.Medium" />
+
+    <style name="AddressPortLabelStyle" parent="@android:style/TextAppearance.Large" />
+
+    <style name="OddRowStyle">
+        <item name="android:background">#333333</item>
+    </style>
+
+    <style name="EvenRowStyle">
+        <item name="android:background">#000000</item>
+    </style>
+
+    <style name="HeaderRowStyle">
+        <item name="android:background">#BB0000</item>
+    </style>
+
+</resources>
