@@ -213,6 +213,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m1_v2_v_sensor_calibration_high));
 		m1v2VerticalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m1_v2_v_sensor_calibration_low));
+		m1v2VerticalActuator.setActuatorOrientation('V');
 
 		List<Actuator> module1Vertebra2Actuators = new ArrayList<Actuator>();
 		module1Vertebra2Actuators.add(m1v2HorizontalActuator);
@@ -234,6 +235,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m1_v3_h_sensor_calibration_high));
 		m1v3HorizontalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m1_v3_h_sensor_calibration_low));
+		m1v3HorizontalActuator.setActuatorOrientation('H');
 
 		TitanoboaActuator m1v3VerticalActuator = new TitanoboaActuator();
 		m1v3VerticalActuator
@@ -246,6 +248,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m1_v3_v_sensor_calibration_high));
 		m1v3VerticalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m1_v3_v_sensor_calibration_low));
+		m1v3VerticalActuator.setActuatorOrientation('V');
 
 		List<Actuator> module1Vertebra3Actuators = new ArrayList<Actuator>();
 		module1Vertebra3Actuators.add(m1v3HorizontalActuator);
@@ -267,6 +270,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m1_v4_h_sensor_calibration_high));
 		m1v4HorizontalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m1_v4_h_sensor_calibration_low));
+		m1v4HorizontalActuator.setActuatorOrientation('H');
 
 		TitanoboaActuator m1v4VerticalActuator = new TitanoboaActuator();
 		m1v4VerticalActuator
@@ -279,6 +283,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m1_v4_v_sensor_calibration_high));
 		m1v4VerticalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m1_v4_v_sensor_calibration_low));
+		m1v4VerticalActuator.setActuatorOrientation('V');
 
 		List<Actuator> module1Vertebra4Actuators = new ArrayList<Actuator>();
 		module1Vertebra4Actuators.add(m1v4HorizontalActuator);
@@ -393,6 +398,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m2_v2_v_sensor_calibration_high));
 		m2v2VerticalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m2_v2_v_sensor_calibration_low));
+		m2v2VerticalActuator.setActuatorOrientation('V');
 
 		List<Actuator> module2Vertebra2Actuators = new ArrayList<Actuator>();
 		module2Vertebra2Actuators.add(m2v2HorizontalActuator);
@@ -414,6 +420,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m2_v3_h_sensor_calibration_high));
 		m2v3HorizontalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m2_v3_h_sensor_calibration_low));
+		m2v3HorizontalActuator.setActuatorOrientation('H');
 
 		TitanoboaActuator m2v3VerticalActuator = new TitanoboaActuator();
 		m2v3VerticalActuator
@@ -426,6 +433,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m2_v3_v_sensor_calibration_high));
 		m2v3VerticalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m2_v3_v_sensor_calibration_low));
+		m2v3VerticalActuator.setActuatorOrientation('V');
 
 		List<Actuator> module2Vertebra3Actuators = new ArrayList<Actuator>();
 		module2Vertebra3Actuators.add(m2v3HorizontalActuator);
@@ -447,6 +455,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m2_v4_h_sensor_calibration_high));
 		m2v4HorizontalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m2_v4_h_sensor_calibration_low));
+		m2v4HorizontalActuator.setActuatorOrientation('H');
 
 		TitanoboaActuator m2v4VerticalActuator = new TitanoboaActuator();
 		m2v4VerticalActuator
@@ -459,6 +468,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m2_v4_v_sensor_calibration_high));
 		m2v4VerticalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m2_v4_v_sensor_calibration_low));
+		m2v4VerticalActuator.setActuatorOrientation('V');
 
 		List<Actuator> module2Vertebra4Actuators = new ArrayList<Actuator>();
 		module2Vertebra4Actuators.add(m2v4HorizontalActuator);
@@ -573,6 +583,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m3_v2_v_sensor_calibration_high));
 		m3v2VerticalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m3_v2_v_sensor_calibration_low));
+		m3v2VerticalActuator.setActuatorOrientation('V');
 
 		List<Actuator> module3Vertebra2Actuators = new ArrayList<Actuator>();
 		module3Vertebra2Actuators.add(m3v2HorizontalActuator);
@@ -594,6 +605,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m3_v3_h_sensor_calibration_high));
 		m3v3HorizontalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m3_v3_h_sensor_calibration_low));
+		m3v3HorizontalActuator.setActuatorOrientation('H');
 
 		TitanoboaActuator m3v3VerticalActuator = new TitanoboaActuator();
 		m3v3VerticalActuator
@@ -606,6 +618,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m3_v3_v_sensor_calibration_high));
 		m3v3VerticalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m3_v3_v_sensor_calibration_low));
+		m3v3VerticalActuator.setActuatorOrientation('V');
 
 		List<Actuator> module3Vertebra3Actuators = new ArrayList<Actuator>();
 		module3Vertebra3Actuators.add(m3v3HorizontalActuator);
@@ -627,6 +640,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m3_v4_h_sensor_calibration_high));
 		m3v4HorizontalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m3_v4_h_sensor_calibration_low));
+		m3v4HorizontalActuator.setActuatorOrientation('H');
 
 		TitanoboaActuator m3v4VerticalActuator = new TitanoboaActuator();
 		m3v4VerticalActuator
@@ -639,6 +653,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m3_v4_v_sensor_calibration_high));
 		m3v4VerticalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m3_v4_v_sensor_calibration_low));
+		m3v4VerticalActuator.setActuatorOrientation('V');
 
 		List<Actuator> module3Vertebra4Actuators = new ArrayList<Actuator>();
 		module3Vertebra4Actuators.add(m3v4HorizontalActuator);
@@ -753,6 +768,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m4_v2_v_sensor_calibration_high));
 		m4v2VerticalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m4_v2_v_sensor_calibration_low));
+		m4v2VerticalActuator.setActuatorOrientation('V');
 
 		List<Actuator> module4Vertebra2Actuators = new ArrayList<Actuator>();
 		module4Vertebra2Actuators.add(m4v2HorizontalActuator);
@@ -774,6 +790,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m4_v3_h_sensor_calibration_high));
 		m4v3HorizontalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m4_v3_h_sensor_calibration_low));
+		m4v3HorizontalActuator.setActuatorOrientation('H');
 
 		TitanoboaActuator m4v3VerticalActuator = new TitanoboaActuator();
 		m4v3VerticalActuator
@@ -786,6 +803,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m4_v3_v_sensor_calibration_high));
 		m4v3VerticalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m4_v3_v_sensor_calibration_low));
+		m4v3VerticalActuator.setActuatorOrientation('V');
 
 		List<Actuator> module4Vertebra3Actuators = new ArrayList<Actuator>();
 		module4Vertebra3Actuators.add(m4v3HorizontalActuator);
@@ -807,6 +825,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m4_v4_h_sensor_calibration_high));
 		m4v4HorizontalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m4_v4_h_sensor_calibration_low));
+		m4v4HorizontalActuator.setActuatorOrientation('H');
 
 		TitanoboaActuator m4v4VerticalActuator = new TitanoboaActuator();
 		m4v4VerticalActuator
@@ -819,6 +838,7 @@ public class TitanoboaControlActivity extends Activity {
 				.setSensorCalibrationHighView((TextView) findViewById(R.id.m4_v4_v_sensor_calibration_high));
 		m4v4VerticalActuator
 				.setSensorCalibrationLowView((TextView) findViewById(R.id.m4_v4_v_sensor_calibration_low));
+		m4v4VerticalActuator.setActuatorOrientation('V');
 
 		List<Actuator> module4Vertebra4Actuators = new ArrayList<Actuator>();
 		module4Vertebra4Actuators.add(m4v4HorizontalActuator);

@@ -20,20 +20,6 @@ public class TitanoboaModel implements Model {
 		this.modules = modules;
 	}
 
-	// @Override
-	// public void updateAllModules() {
-	// for (Module module : modules) {
-	// module.updateViews();
-	// }
-	//
-	// }
-	//
-	// @Override
-	// public void updateOneModule(int moduleToUpdate) {
-	// modules.get(moduleToUpdate).updateViews();
-	//
-	// }
-
 	@Override
 	public void updateData(List<Packet> packets) {
 		// have to subtract 1 because module numbers are 1, 2, 3, 4, but our

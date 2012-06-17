@@ -9,10 +9,6 @@ public interface Model {
 	public List<Module> getModules();
 
 	public void setModules(List<Module> modules);
-
-//	public void updateAllModules();
-//
-//	public void updateOneModule(int moduleToUpdate);
 	
 	public void updateData(List<Packet> packets);
 }
