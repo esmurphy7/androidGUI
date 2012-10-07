@@ -9,10 +9,6 @@ public interface PacketReader extends Runnable {
 
 	public void run();
 
-	public String getAddress();
-
-	public void setAddress(String address);
-
 	public int getPort();
 
 	public void setPort(int port);

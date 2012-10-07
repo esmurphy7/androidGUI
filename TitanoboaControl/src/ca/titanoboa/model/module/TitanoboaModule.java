@@ -7,9 +7,16 @@ import android.widget.TextView;
 import ca.titanoboa.model.vertebra.Vertebra;
 import ca.titanoboa.packet.Packet;
 
+/**
+ * Represents a single module (largest unit) of Titanoboa. Currently (Oct. 2012)
+ * each module has 5 vertebrae. In addition to containing the vertebrae, each
+ * module has its own battery level and motor speed.
+ * 
+ * @author Graham
+ * 
+ */
 public class TitanoboaModule implements Module {
 	public static final int VERTEBRAE_PER_MODULE = 5;
-	public static final int VERTEBRA_VALUES_SIZE = 10;
 
 	private List<Vertebra> vertebrae;
 	private int batteryLevel;
@@ -58,24 +65,18 @@ public class TitanoboaModule implements Module {
 		this.batteryLevelView = batteryLevelView;
 	}
 
-//	@Override
-//	public void updateViews() {
-//		motorSpeedView.setText(Integer.toString(motorSpeed));
-//		batteryLevelView.setText(Integer.toString(batteryLevel));
-//
-//		for (Vertebra vertebra : vertebrae) {
-//			vertebra.updateViews();
-//		}
-//
-//	}
-	
+	/**
+	 * Update data for this module. Tell each vertebra to update itself in turn,
+	 * passing it the packet.
+	 * @param packet The packet for this module.
+	 */
 	public void updateData(Packet packet) {
 		motorSpeed = packet.getMotorSpeed();
 		batteryLevel = packet.getBatteryLevel();
-		
+
 		motorSpeedView.setText(Integer.toString(motorSpeed));
 		batteryLevelView.setText(Integer.toString(batteryLevel));
-		
+
 		for (Vertebra vertebra : vertebrae) {
 			vertebra.updateData(packet);
 		}

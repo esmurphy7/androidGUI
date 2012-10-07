@@ -31,7 +31,7 @@ public class TitanoboaControlActivity extends Activity {
 	private boolean packetReaderThreadStarted;
 	private Handler uiUpdateHandler;
 	private Runnable uiUpdateTask;
-	
+
 	// how often data updates, in ms
 	public static final int UPDATE_DELAY = 1000;
 
@@ -54,8 +54,8 @@ public class TitanoboaControlActivity extends Activity {
 				if (!packets.isEmpty()) {
 					titanoboaModel.updateData(packets);
 				}
-				uiUpdateHandler.postAtTime(this,
-						SystemClock.uptimeMillis() + UPDATE_DELAY);
+				uiUpdateHandler.postAtTime(this, SystemClock.uptimeMillis()
+						+ UPDATE_DELAY);
 			}
 		};
 
@@ -108,6 +108,15 @@ public class TitanoboaControlActivity extends Activity {
 	 * Set up model with modules, vertebrae, and actuators.
 	 */
 	private void setupTitanoboaModel() {
+		/*
+		 * My apologies for this nasty-ass setup code. :| Much of the difficulty
+		 * is in the fact that there's no particularly good way to cobble
+		 * together the R.id.x string - there's a findViewByName which would
+		 * make the code neater, but it's horribly inefficient compared to
+		 * findViewById. Doing the TextView creation programmatically rather
+		 * than in the layout XML might help.
+		 */
+
 		titanoboaModel = new TitanoboaModel();
 
 		TitanoboaModule module1 = new TitanoboaModule();

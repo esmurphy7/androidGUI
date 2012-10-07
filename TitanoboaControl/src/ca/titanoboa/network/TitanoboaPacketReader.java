@@ -11,21 +11,26 @@ import ca.titanoboa.model.TitanoboaModel;
 import ca.titanoboa.packet.Packet;
 import ca.titanoboa.packet.TitanoboaPacket;
 
+/**
+ * Packet reader for Titanoboa - gets packets via UDP.
+ * 
+ * @author Graham
+ * 
+ */
 public class TitanoboaPacketReader extends Thread implements PacketReader {
 
 	private List<Packet> packets;
 	private DatagramSocket datagramSocket;
-	private String address;
 	private int port;
 
 	public TitanoboaPacketReader() {
 		packets = new ArrayList<Packet>();
 		Packet emptyPacket = new TitanoboaPacket();
 		for (int i = 0; i < TitanoboaModel.NUMBER_OF_MODULES; i++) {
-			packets.add(emptyPacket); 
+			packets.add(emptyPacket);
 		}
 	}
-	
+
 	@Override
 	public void finalize() {
 		datagramSocket.close();
@@ -36,6 +41,10 @@ public class TitanoboaPacketReader extends Thread implements PacketReader {
 		return packets;
 	}
 
+	/**
+	 * Get packets from UDP. Each time, set the appropriate member of the
+	 * 'packets' list (module number - 1) to the received packet.
+	 */
 	@Override
 	public void run() {
 		try {
@@ -61,14 +70,6 @@ public class TitanoboaPacketReader extends Thread implements PacketReader {
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
 	}
 
 	public int getPort() {

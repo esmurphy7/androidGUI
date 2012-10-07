@@ -1,5 +1,13 @@
 package ca.titanoboa.packet;
 
+/**
+ * Represents a packet. Each packet contains all the data for a particular
+ * module. Most of the get* methods convert the relevant bits to an int for the
+ * app. TODO: Add the packet structure.
+ * 
+ * @author Graham
+ * 
+ */
 public class TitanoboaPacket implements Packet {
 
 	private byte[] rawPacket;
@@ -7,7 +15,7 @@ public class TitanoboaPacket implements Packet {
 	public TitanoboaPacket() {
 		this.rawPacket = new byte[170];
 	}
-	
+
 	public TitanoboaPacket(byte[] rawPacket) {
 		this.rawPacket = rawPacket;
 	}

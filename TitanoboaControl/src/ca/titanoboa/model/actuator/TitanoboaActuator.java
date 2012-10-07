@@ -3,6 +3,12 @@ package ca.titanoboa.model.actuator;
 import ca.titanoboa.packet.Packet;
 import android.widget.TextView;
 
+/**
+ * Represents a single actuator with orientation (H or V), current angle,
+ * setpoint angle, raw sensor value, and sensor calibration high and low.
+ * 
+ * @Author Graham
+ */
 public class TitanoboaActuator implements Actuator {
 	private int currentAngle;
 	private int setpointAngle;
@@ -107,6 +113,14 @@ public class TitanoboaActuator implements Actuator {
 		this.sensorCalibrationLow = sensorCalibrationLow;
 	}
 
+	/**
+	 * Update all the data for this actuator.
+	 * 
+	 * @param packet
+	 *            The packet passed down from the vertebra.
+	 * @param vertebraNumber
+	 *            The vertebra number this actuator is in.
+	 */
 	@Override
 	public void updateData(Packet packet, int vertebraNumber) {
 		if (actuatorOrientation == 'H') {
