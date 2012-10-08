@@ -35,8 +35,6 @@ public interface Module {
 
 	public void setBatteryLevelView(TextView batteryLevelView);
 	
-	//public void updateViews();
-	
 	public void updateData(Packet packet);
 
 }

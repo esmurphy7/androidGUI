@@ -19,6 +19,8 @@ import ca.titanoboa.packet.TitanoboaPacket;
  */
 public class TitanoboaPacketReader extends Thread implements PacketReader {
 
+	private static final int PACKET_SIZE = 170;
+	
 	private List<Packet> packets;
 	private DatagramSocket datagramSocket;
 	private int port;
@@ -55,7 +57,7 @@ public class TitanoboaPacketReader extends Thread implements PacketReader {
 		}
 		while (true) {
 			try {
-				byte[] buf = new byte[170];
+				byte[] buf = new byte[PACKET_SIZE];
 				DatagramPacket rawPacket = new DatagramPacket(buf, buf.length);
 				datagramSocket.receive(rawPacket);
 				Packet packet = new TitanoboaPacket(rawPacket.getData());

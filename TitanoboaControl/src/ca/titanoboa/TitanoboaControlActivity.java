@@ -24,7 +24,73 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.EditText;
 
+/**
+ * The base activity of the whole app!
+ * 
+ * @author Graham
+ * 
+ */
 public class TitanoboaControlActivity extends Activity {
+
+	/**
+	 * A Runnable implementation for updating the UI every UPDATE_DELAY ms.
+	 */
+	private final class UIUpdateTask implements Runnable {
+		@Override
+		public void run() {
+			List<Packet> packets = titanoboaPacketReader.getPackets();
+			if (!packets.isEmpty()) {
+				titanoboaModel.updateData(packets);
+			}
+			uiUpdateHandler.postAtTime(this, SystemClock.uptimeMillis()
+					+ UPDATE_DELAY);
+		}
+	}
+
+	/**
+	 * Listener for the connect button. Starts and stops the packet reader and
+	 * UI updater, and toggles the button label between Connect and Disconnect.
+	 */
+	private final class ConnectButtonOnClickListener implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			// toggle packet reader/UI updater state and button label
+			if (!packetReaderThreadStarted) {
+				titanoboaPacketReader.setPort(Integer
+						.parseInt(((EditText) findViewById(R.id.portEditText))
+								.getText().toString()));
+
+				// start packet reader
+				packetReaderThread = new Thread(titanoboaPacketReader);
+				packetReaderThreadStarted = true;
+				packetReaderThread.start();
+
+				// start UI updater
+				uiUpdateHandler.removeCallbacks(uiUpdateTask);
+				uiUpdateHandler.post(uiUpdateTask);
+
+				// toggle button label to Disconnect
+				Button connectButton = ((Button) v);
+				connectButton.setText(getResources().getString(
+						R.string.disconnect_button_label));
+
+			} else {
+				// stop packet reader
+				packetReaderThreadStarted = false;
+				packetReaderThread.interrupt();
+
+				// stop UI updater
+				uiUpdateHandler.removeCallbacks(uiUpdateTask);
+
+				// toggle button label to Connect
+				Button connectButton = ((Button) v);
+				connectButton.setText(getResources().getString(
+						R.string.connect_button_label));
+			}
+
+		}
+	}
+
 	private Model titanoboaModel;
 	private PacketReader titanoboaPacketReader;
 	private Thread packetReaderThread;
@@ -48,59 +114,10 @@ public class TitanoboaControlActivity extends Activity {
 		packetReaderThreadStarted = false;
 
 		uiUpdateHandler = new Handler();
-		uiUpdateTask = new Runnable() {
-			public void run() {
-				List<Packet> packets = titanoboaPacketReader.getPackets();
-				if (!packets.isEmpty()) {
-					titanoboaModel.updateData(packets);
-				}
-				uiUpdateHandler.postAtTime(this, SystemClock.uptimeMillis()
-						+ UPDATE_DELAY);
-			}
-		};
+		uiUpdateTask = new UIUpdateTask();
 
 		Button connectButton = ((Button) findViewById(R.id.connectButton));
-		connectButton.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// toggle packet reader/UI updater state and button label
-				if (!packetReaderThreadStarted) {
-					titanoboaPacketReader.setPort(Integer
-							.parseInt(((EditText) findViewById(R.id.portEditText))
-									.getText().toString()));
-
-					// start packet reader
-					packetReaderThread = new Thread(titanoboaPacketReader);
-					packetReaderThreadStarted = true;
-					packetReaderThread.start();
-
-					// start UI updater
-					uiUpdateHandler.removeCallbacks(uiUpdateTask);
-					uiUpdateHandler.post(uiUpdateTask);
-
-					// toggle button label to Disconnect
-					Button connectButton = ((Button) v);
-					connectButton.setText(getResources().getString(
-							R.string.disconnect_button_label));
-
-				} else {
-					// stop packet reader
-					packetReaderThreadStarted = false;
-					packetReaderThread.interrupt();
-
-					// stop UI updater
-					uiUpdateHandler.removeCallbacks(uiUpdateTask);
-
-					// toggle button label to Connect
-					Button connectButton = ((Button) v);
-					connectButton.setText(getResources().getString(
-							R.string.connect_button_label));
-				}
-
-			}
-
-		});
+		connectButton.setOnClickListener(new ConnectButtonOnClickListener());
 
 	}
 
@@ -114,7 +131,8 @@ public class TitanoboaControlActivity extends Activity {
 		 * together the R.id.x string - there's a findViewByName which would
 		 * make the code neater, but it's horribly inefficient compared to
 		 * findViewById. Doing the TextView creation programmatically rather
-		 * than in the layout XML might help.
+		 * than in the layout XML might help. Pulling this out to its own class
+		 * would be nice, too.
 		 */
 
 		titanoboaModel = new TitanoboaModel();
