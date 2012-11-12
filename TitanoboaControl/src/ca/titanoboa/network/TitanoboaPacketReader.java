@@ -33,6 +33,14 @@ public class TitanoboaPacketReader extends Thread implements PacketReader {
 		}
 	}
 
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+	
 	@Override
 	public void finalize() {
 		datagramSocket.close();
@@ -52,7 +60,6 @@ public class TitanoboaPacketReader extends Thread implements PacketReader {
 		try {
 			datagramSocket = new DatagramSocket(port);
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		while (true) {
@@ -72,14 +79,6 @@ public class TitanoboaPacketReader extends Thread implements PacketReader {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
 	}
 
 }

@@ -32,8 +32,6 @@ public class TitanoboaModel implements Model {
 	 */
 	@Override
 	public void updateData(List<Packet> packets) {
-		// module numbers in the GUI are 1, 2, 3, 4, but our list indices are 0,
-		// 1, 2, 3
 		for (int i = 0; i < NUMBER_OF_MODULES; i++)
 			if (packets.size() > i) {
 				Packet updatePacketForModule = packets.get(i);
