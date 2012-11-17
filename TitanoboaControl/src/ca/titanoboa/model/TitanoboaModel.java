@@ -15,21 +15,33 @@ public class TitanoboaModel implements Model {
 
 	public static final int NUMBER_OF_MODULES = 4;
 	private List<Module> modules;
+	private int selectedModule;
 
+	/** {@inheritDoc} **/
 	@Override
 	public List<Module> getModules() {
 		return modules;
 	}
 
+	/** {@inheritDoc} **/
 	@Override
 	public void setModules(List<Module> modules) {
 		this.modules = modules;
 	}
 
-	/**
-	 * Update the data for the entire model, module by module.
-	 * @param packets The list of packets.
-	 */
+	/** {@inheritDoc} **/
+	@Override
+	public int getSelectedModule() {
+		return selectedModule;
+	}
+
+	/** {@inheritDoc} **/
+	@Override
+	public void setSelectedModule(int selectedModule) {
+		this.selectedModule = selectedModule;
+	}
+
+	/** {@inheritDoc} **/
 	@Override
 	public void updateData(List<Packet> packets) {
 		for (int i = 0; i < NUMBER_OF_MODULES; i++)

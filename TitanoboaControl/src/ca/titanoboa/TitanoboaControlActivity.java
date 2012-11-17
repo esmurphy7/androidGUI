@@ -18,9 +18,11 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.EditText;
 
@@ -31,6 +33,9 @@ import android.widget.EditText;
  * 
  */
 public class TitanoboaControlActivity extends Activity {
+
+	private int selectedModule;
+	private boolean screenSizeIsXLarge;
 
 	/**
 	 * A Runnable implementation for updating the UI every UPDATE_DELAY ms.
@@ -91,6 +96,41 @@ public class TitanoboaControlActivity extends Activity {
 		}
 	}
 
+	/**
+	 * On click listener for module buttons. Only used for phone version of app
+	 * so far.
+	 * 
+	 * @author Graham
+	 * 
+	 */
+	private final class ModuleButtonsOnClickListener implements OnClickListener {
+
+		/**
+		 * Switch selected module depending on which radio button was clicked.
+		 */
+		@Override
+		public void onClick(View v) {
+
+			int buttonId = v.getId();
+			switch (buttonId) {
+			case R.id.module1Radio:
+				selectedModule = 1;
+				break;
+			case R.id.module2Radio:
+				selectedModule = 2;
+				break;
+			case R.id.module3Radio:
+				selectedModule = 3;
+				break;
+			case R.id.module4Radio:
+				selectedModule = 4;
+				break;
+			}
+
+		}
+
+	}
+
 	private Model titanoboaModel;
 	private PacketReader titanoboaPacketReader;
 	private Thread packetReaderThread;
@@ -106,11 +146,23 @@ public class TitanoboaControlActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		
+		boolean screenSizeIsXLarge = getResources().getBoolean(
+				R.bool.screen_xlarge);
 
 		titanoboaModel = new TitanoboaModel();
-		setupTitanoboaModel();
+
+		// initialize differently for a tablet (xlarge) than a phone
+		if (screenSizeIsXLarge) {
+			selectedModule = 0;
+			setupTitanoboaModelXLarge();
+		} else {
+			selectedModule = 1;
+			setupTitanoboaModelNormal();
+		}
 
 		titanoboaPacketReader = new TitanoboaPacketReader();
+		// Packet reader is started via Connect button
 		packetReaderThreadStarted = false;
 
 		uiUpdateHandler = new Handler();
@@ -119,12 +171,38 @@ public class TitanoboaControlActivity extends Activity {
 		Button connectButton = ((Button) findViewById(R.id.connectButton));
 		connectButton.setOnClickListener(new ConnectButtonOnClickListener());
 
+		if (!screenSizeIsXLarge) {
+			OnClickListener moduleButtonsOnClickListener = new ModuleButtonsOnClickListener();
+			RadioButton module1Radio = ((RadioButton) findViewById(R.id.module1Radio));
+			module1Radio.setOnClickListener(moduleButtonsOnClickListener);
+			module1Radio.setSelected(true);
+			RadioButton module2Radio = ((RadioButton) findViewById(R.id.module2Radio));
+			module2Radio.setOnClickListener(moduleButtonsOnClickListener);
+			RadioButton module3Radio = ((RadioButton) findViewById(R.id.module3Radio));
+			module3Radio.setOnClickListener(moduleButtonsOnClickListener);
+			RadioButton module4Radio = ((RadioButton) findViewById(R.id.module4Radio));
+			module4Radio.setOnClickListener(moduleButtonsOnClickListener);
+		}
 	}
 
 	/**
-	 * Set up model with modules, vertebrae, and actuators.
+	 * Set up model with modules, vertebrae, and actuators. Normal version for
+	 * phones.
 	 */
-	private void setupTitanoboaModel() {
+	private void setupTitanoboaModelNormal() {
+		// TODO: Set up model for normal screen. I think what should be done is
+		// to set the same views for all modules, and just allow the model to
+		// determine via selectedModule which module should be allowed to update
+		// its values on the screen. With that in mind this method should be a
+		// lot simpler than the XLarge setup - just loop over the list of 4
+		// modules and set all the vertebrae and actuators up the same way.
+	}
+
+	/**
+	 * Set up model with modules, vertebrae, and actuators. XLarge version for
+	 * tablets.
+	 */
+	private void setupTitanoboaModelXLarge() {
 		/*
 		 * My apologies for this nasty-ass setup code. :| Much of the difficulty
 		 * is in the fact that there's no particularly good way to cobble
