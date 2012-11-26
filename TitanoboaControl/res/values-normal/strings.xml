@@ -19,10 +19,8 @@
     <string name="titanoboa_logo">Titanoboa logo</string>
     <string name="address_label">Address:</string>
     <string name="port_label">Port:</string>
+    <string name="module">Module</string>
     <string name="module1">Module 1</string>
-    <string name="module2">Module 2</string>
-    <string name="module3">Module 3</string>
-    <string name="module4">Module 4</string>
     <string name="data_default">0</string>
     <string name="vertebra0">V0</string>
     <string name="vertebra1">V1</string>

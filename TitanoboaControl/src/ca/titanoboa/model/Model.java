@@ -29,7 +29,14 @@ public interface Model {
 	 * @param packets
 	 *            The list of packets.
 	 */
-	void updateData(List<Packet> packets);
+	void updateDataAll(List<Packet> packets);
+	
+	/**
+	 * Update the data for just the selected module.
+	 * 
+	 * @param packets The list of packets.
+	 */
+	void updateDataSelected(Packet packet, int selectedModule);
 
 	/**
 	 * Get the selected module.

@@ -2,7 +2,18 @@ package ca.titanoboa;
 
 import java.util.ArrayList;
 import java.util.List;
-import ca.titanoboa.R;
+
+import android.app.Activity;
+import android.content.pm.ActivityInfo;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.TextView;
 import ca.titanoboa.model.Model;
 import ca.titanoboa.model.TitanoboaModel;
 import ca.titanoboa.model.actuator.Actuator;
@@ -14,17 +25,6 @@ import ca.titanoboa.model.vertebra.Vertebra;
 import ca.titanoboa.network.PacketReader;
 import ca.titanoboa.network.TitanoboaPacketReader;
 import ca.titanoboa.packet.Packet;
-import android.app.Activity;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
-import android.util.DisplayMetrics;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.RadioButton;
-import android.widget.TextView;
-import android.widget.EditText;
 
 /**
  * The base activity of the whole app!
@@ -34,129 +34,54 @@ import android.widget.EditText;
  */
 public class TitanoboaControlActivity extends Activity {
 
-	private int selectedModule;
-	private boolean screenSizeIsXLarge;
-
-	/**
-	 * A Runnable implementation for updating the UI every UPDATE_DELAY ms.
-	 */
-	private final class UIUpdateTask implements Runnable {
-		@Override
-		public void run() {
-			List<Packet> packets = titanoboaPacketReader.getPackets();
-			if (!packets.isEmpty()) {
-				titanoboaModel.updateData(packets);
-			}
-			uiUpdateHandler.postAtTime(this, SystemClock.uptimeMillis()
-					+ UPDATE_DELAY);
-		}
-	}
-
-	/**
-	 * Listener for the connect button. Starts and stops the packet reader and
-	 * UI updater, and toggles the button label between Connect and Disconnect.
-	 */
-	private final class ConnectButtonOnClickListener implements OnClickListener {
-		@Override
-		public void onClick(View v) {
-			// toggle packet reader/UI updater state and button label
-			if (!packetReaderThreadStarted) {
-				titanoboaPacketReader.setPort(Integer
-						.parseInt(((EditText) findViewById(R.id.portEditText))
-								.getText().toString()));
-
-				// start packet reader
-				packetReaderThread = new Thread(titanoboaPacketReader);
-				packetReaderThreadStarted = true;
-				packetReaderThread.start();
-
-				// start UI updater
-				uiUpdateHandler.removeCallbacks(uiUpdateTask);
-				uiUpdateHandler.post(uiUpdateTask);
-
-				// toggle button label to Disconnect
-				Button connectButton = ((Button) v);
-				connectButton.setText(getResources().getString(
-						R.string.disconnect_button_label));
-
-			} else {
-				// stop packet reader
-				packetReaderThreadStarted = false;
-				packetReaderThread.interrupt();
-
-				// stop UI updater
-				uiUpdateHandler.removeCallbacks(uiUpdateTask);
-
-				// toggle button label to Connect
-				Button connectButton = ((Button) v);
-				connectButton.setText(getResources().getString(
-						R.string.connect_button_label));
-			}
-
-		}
-	}
-
-	/**
-	 * On click listener for module buttons. Only used for phone version of app
-	 * so far.
-	 * 
-	 * @author Graham
-	 * 
-	 */
-	private final class ModuleButtonsOnClickListener implements OnClickListener {
-
-		/**
-		 * Switch selected module depending on which radio button was clicked.
-		 */
-		@Override
-		public void onClick(View v) {
-
-			int buttonId = v.getId();
-			switch (buttonId) {
-			case R.id.module1Radio:
-				selectedModule = 1;
-				break;
-			case R.id.module2Radio:
-				selectedModule = 2;
-				break;
-			case R.id.module3Radio:
-				selectedModule = 3;
-				break;
-			case R.id.module4Radio:
-				selectedModule = 4;
-				break;
-			}
-
-		}
-
-	}
-
 	private Model titanoboaModel;
 	private PacketReader titanoboaPacketReader;
 	private Thread packetReaderThread;
 	private boolean packetReaderThreadStarted;
 	private Handler uiUpdateHandler;
 	private Runnable uiUpdateTask;
+	private int selectedModule;
+	private boolean screenSizeIsXLarge;
 
 	// how often data updates, in ms
 	public static final int UPDATE_DELAY = 1000;
+
+	/**
+	 * Get the selected module.
+	 * 
+	 * @return the selected module
+	 */
+	public int getSelectedModule() {
+		return selectedModule;
+	}
+
+	/**
+	 * Set the selected module.
+	 * 
+	 * @param selectedModule
+	 *            the selected module to set
+	 */
+	public void setSelectedModule(int selectedModule) {
+		this.selectedModule = selectedModule;
+	}
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		
-		boolean screenSizeIsXLarge = getResources().getBoolean(
-				R.bool.screen_xlarge);
+
+		screenSizeIsXLarge = getResources().getBoolean(R.bool.screen_xlarge);
 
 		titanoboaModel = new TitanoboaModel();
 
 		// initialize differently for a tablet (xlarge) than a phone
 		if (screenSizeIsXLarge) {
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 			selectedModule = 0;
 			setupTitanoboaModelXLarge();
 		} else {
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			selectedModule = 1;
 			setupTitanoboaModelNormal();
 		}
@@ -190,12 +115,201 @@ public class TitanoboaControlActivity extends Activity {
 	 * phones.
 	 */
 	private void setupTitanoboaModelNormal() {
-		// TODO: Set up model for normal screen. I think what should be done is
-		// to set the same views for all modules, and just allow the model to
-		// determine via selectedModule which module should be allowed to update
-		// its values on the screen. With that in mind this method should be a
-		// lot simpler than the XLarge setup - just loop over the list of 4
-		// modules and set all the vertebrae and actuators up the same way.
+
+		titanoboaModel = new TitanoboaModel();
+
+		List<Module> modules = new ArrayList<Module>();
+
+		for (int i = 0; i < TitanoboaModel.NUMBER_OF_MODULES; i++) {
+
+			TitanoboaModule module = new TitanoboaModule();
+
+			List<Vertebra> vertebrae = new ArrayList<Vertebra>();
+
+			module.setBatteryLevelView((TextView) findViewById(R.id.battery_level));
+			module.setMotorSpeedView((TextView) findViewById(R.id.motor_speed));
+
+			TitanoboaVertebra vertebra0 = new TitanoboaVertebra();
+
+			TitanoboaActuator v0HorizontalActuator = new TitanoboaActuator();
+			v0HorizontalActuator
+					.setSetpointAngleView((TextView) findViewById(R.id.v0_h_setpoint_angle));
+			v0HorizontalActuator
+					.setCurrentAngleView((TextView) findViewById(R.id.v0_h_current_angle));
+			v0HorizontalActuator
+					.setRawSensorValueView((TextView) findViewById(R.id.v0_h_raw_sensor_value));
+			v0HorizontalActuator
+					.setSensorCalibrationHighView((TextView) findViewById(R.id.v0_h_sensor_calibration_high));
+			v0HorizontalActuator
+					.setSensorCalibrationLowView((TextView) findViewById(R.id.v0_h_sensor_calibration_low));
+			v0HorizontalActuator.setActuatorOrientation('H');
+
+			TitanoboaActuator v0VerticalActuator = new TitanoboaActuator();
+			v0VerticalActuator
+					.setSetpointAngleView((TextView) findViewById(R.id.v0_v_setpoint_angle));
+			v0VerticalActuator
+					.setCurrentAngleView((TextView) findViewById(R.id.v0_v_current_angle));
+			v0VerticalActuator
+					.setRawSensorValueView((TextView) findViewById(R.id.v0_v_raw_sensor_value));
+			v0VerticalActuator
+					.setSensorCalibrationHighView((TextView) findViewById(R.id.v0_v_sensor_calibration_high));
+			v0VerticalActuator
+					.setSensorCalibrationLowView((TextView) findViewById(R.id.v0_v_sensor_calibration_low));
+			v0VerticalActuator.setActuatorOrientation('V');
+
+			List<Actuator> vertebra0Actuators = new ArrayList<Actuator>();
+			vertebra0Actuators.add(v0HorizontalActuator);
+			vertebra0Actuators.add(v0VerticalActuator);
+			vertebra0.setActuators(vertebra0Actuators);
+			vertebra0.setVertebraNumber(0);
+			vertebrae.add(vertebra0);
+
+			TitanoboaVertebra vertebra1 = new TitanoboaVertebra();
+
+			TitanoboaActuator v1HorizontalActuator = new TitanoboaActuator();
+			v1HorizontalActuator
+					.setSetpointAngleView((TextView) findViewById(R.id.v1_h_setpoint_angle));
+			v1HorizontalActuator
+					.setCurrentAngleView((TextView) findViewById(R.id.v1_h_current_angle));
+			v1HorizontalActuator
+					.setRawSensorValueView((TextView) findViewById(R.id.v1_h_raw_sensor_value));
+			v1HorizontalActuator
+					.setSensorCalibrationHighView((TextView) findViewById(R.id.v1_h_sensor_calibration_high));
+			v1HorizontalActuator
+					.setSensorCalibrationLowView((TextView) findViewById(R.id.v1_h_sensor_calibration_low));
+			v1HorizontalActuator.setActuatorOrientation('H');
+
+			TitanoboaActuator v1VerticalActuator = new TitanoboaActuator();
+			v1VerticalActuator
+					.setSetpointAngleView((TextView) findViewById(R.id.v1_v_setpoint_angle));
+			v1VerticalActuator
+					.setCurrentAngleView((TextView) findViewById(R.id.v1_v_current_angle));
+			v1VerticalActuator
+					.setRawSensorValueView((TextView) findViewById(R.id.v1_v_raw_sensor_value));
+			v1VerticalActuator
+					.setSensorCalibrationHighView((TextView) findViewById(R.id.v1_v_sensor_calibration_high));
+			v1VerticalActuator
+					.setSensorCalibrationLowView((TextView) findViewById(R.id.v1_v_sensor_calibration_low));
+			v1VerticalActuator.setActuatorOrientation('V');
+
+			List<Actuator> vertebra1Actuators = new ArrayList<Actuator>();
+			vertebra1Actuators.add(v1HorizontalActuator);
+			vertebra1Actuators.add(v1VerticalActuator);
+			vertebra1.setActuators(vertebra1Actuators);
+			vertebra1.setVertebraNumber(1);
+			vertebrae.add(vertebra1);
+
+			TitanoboaVertebra vertebra2 = new TitanoboaVertebra();
+
+			TitanoboaActuator v2HorizontalActuator = new TitanoboaActuator();
+			v2HorizontalActuator
+					.setSetpointAngleView((TextView) findViewById(R.id.v2_h_setpoint_angle));
+			v2HorizontalActuator
+					.setCurrentAngleView((TextView) findViewById(R.id.v2_h_current_angle));
+			v2HorizontalActuator
+					.setRawSensorValueView((TextView) findViewById(R.id.v2_h_raw_sensor_value));
+			v2HorizontalActuator
+					.setSensorCalibrationHighView((TextView) findViewById(R.id.v2_h_sensor_calibration_high));
+			v2HorizontalActuator
+					.setSensorCalibrationLowView((TextView) findViewById(R.id.v2_h_sensor_calibration_low));
+			v2HorizontalActuator.setActuatorOrientation('H');
+
+			TitanoboaActuator v2VerticalActuator = new TitanoboaActuator();
+			v2VerticalActuator
+					.setSetpointAngleView((TextView) findViewById(R.id.v2_v_setpoint_angle));
+			v2VerticalActuator
+					.setCurrentAngleView((TextView) findViewById(R.id.v2_v_current_angle));
+			v2VerticalActuator
+					.setRawSensorValueView((TextView) findViewById(R.id.v2_v_raw_sensor_value));
+			v2VerticalActuator
+					.setSensorCalibrationHighView((TextView) findViewById(R.id.v2_v_sensor_calibration_high));
+			v2VerticalActuator
+					.setSensorCalibrationLowView((TextView) findViewById(R.id.v2_v_sensor_calibration_low));
+			v2VerticalActuator.setActuatorOrientation('V');
+
+			List<Actuator> vertebra2Actuators = new ArrayList<Actuator>();
+			vertebra2Actuators.add(v2HorizontalActuator);
+			vertebra2Actuators.add(v2VerticalActuator);
+			vertebra2.setActuators(vertebra2Actuators);
+			vertebra2.setVertebraNumber(2);
+			vertebrae.add(vertebra2);
+
+			TitanoboaVertebra vertebra3 = new TitanoboaVertebra();
+
+			TitanoboaActuator v3HorizontalActuator = new TitanoboaActuator();
+			v3HorizontalActuator
+					.setSetpointAngleView((TextView) findViewById(R.id.v3_h_setpoint_angle));
+			v3HorizontalActuator
+					.setCurrentAngleView((TextView) findViewById(R.id.v3_h_current_angle));
+			v3HorizontalActuator
+					.setRawSensorValueView((TextView) findViewById(R.id.v3_h_raw_sensor_value));
+			v3HorizontalActuator
+					.setSensorCalibrationHighView((TextView) findViewById(R.id.v3_h_sensor_calibration_high));
+			v3HorizontalActuator
+					.setSensorCalibrationLowView((TextView) findViewById(R.id.v3_h_sensor_calibration_low));
+			v3HorizontalActuator.setActuatorOrientation('H');
+
+			TitanoboaActuator v3VerticalActuator = new TitanoboaActuator();
+			v3VerticalActuator
+					.setSetpointAngleView((TextView) findViewById(R.id.v3_v_setpoint_angle));
+			v3VerticalActuator
+					.setCurrentAngleView((TextView) findViewById(R.id.v3_v_current_angle));
+			v3VerticalActuator
+					.setRawSensorValueView((TextView) findViewById(R.id.v3_v_raw_sensor_value));
+			v3VerticalActuator
+					.setSensorCalibrationHighView((TextView) findViewById(R.id.v3_v_sensor_calibration_high));
+			v3VerticalActuator
+					.setSensorCalibrationLowView((TextView) findViewById(R.id.v3_v_sensor_calibration_low));
+			v3VerticalActuator.setActuatorOrientation('V');
+
+			List<Actuator> vertebra3Actuators = new ArrayList<Actuator>();
+			vertebra3Actuators.add(v3HorizontalActuator);
+			vertebra3Actuators.add(v3VerticalActuator);
+			vertebra3.setActuators(vertebra3Actuators);
+			vertebra3.setVertebraNumber(3);
+			vertebrae.add(vertebra3);
+
+			TitanoboaVertebra vertebra4 = new TitanoboaVertebra();
+
+			TitanoboaActuator v4HorizontalActuator = new TitanoboaActuator();
+			v4HorizontalActuator
+					.setSetpointAngleView((TextView) findViewById(R.id.v4_h_setpoint_angle));
+			v4HorizontalActuator
+					.setCurrentAngleView((TextView) findViewById(R.id.v4_h_current_angle));
+			v4HorizontalActuator
+					.setRawSensorValueView((TextView) findViewById(R.id.v4_h_raw_sensor_value));
+			v4HorizontalActuator
+					.setSensorCalibrationHighView((TextView) findViewById(R.id.v4_h_sensor_calibration_high));
+			v4HorizontalActuator
+					.setSensorCalibrationLowView((TextView) findViewById(R.id.v4_h_sensor_calibration_low));
+			v4HorizontalActuator.setActuatorOrientation('H');
+
+			TitanoboaActuator v4VerticalActuator = new TitanoboaActuator();
+			v4VerticalActuator
+					.setSetpointAngleView((TextView) findViewById(R.id.v4_v_setpoint_angle));
+			v4VerticalActuator
+					.setCurrentAngleView((TextView) findViewById(R.id.v4_v_current_angle));
+			v4VerticalActuator
+					.setRawSensorValueView((TextView) findViewById(R.id.v4_v_raw_sensor_value));
+			v4VerticalActuator
+					.setSensorCalibrationHighView((TextView) findViewById(R.id.v4_v_sensor_calibration_high));
+			v4VerticalActuator
+					.setSensorCalibrationLowView((TextView) findViewById(R.id.v4_v_sensor_calibration_low));
+			v4VerticalActuator.setActuatorOrientation('V');
+
+			List<Actuator> vertebra4Actuators = new ArrayList<Actuator>();
+			vertebra4Actuators.add(v4HorizontalActuator);
+			vertebra4Actuators.add(v4VerticalActuator);
+			vertebra4.setActuators(vertebra4Actuators);
+			vertebra4.setVertebraNumber(4);
+			vertebrae.add(vertebra4);
+
+			module.setVertebrae(vertebrae);
+
+			modules.add(module);
+		}
+
+		titanoboaModel.setModules(modules);
 	}
 
 	/**
@@ -957,6 +1071,114 @@ public class TitanoboaControlActivity extends Activity {
 		modules.add(module4);
 
 		titanoboaModel.setModules(modules);
+
+	}
+
+	// TODO: Move these classes to their own files? Would require some reworking
+	// since they use some Activity methods.
+
+	/**
+	 * A Runnable implementation for updating the UI every UPDATE_DELAY ms.
+	 */
+	private final class UIUpdateTask implements Runnable {
+		@Override
+		public void run() {
+			List<Packet> packets = titanoboaPacketReader.getPackets();
+			if (!packets.isEmpty()) {
+				if (screenSizeIsXLarge) {
+					titanoboaModel.updateDataAll(packets);
+				} else {
+					titanoboaModel.updateDataSelected(
+							packets.get(selectedModule - 1), selectedModule);
+				}
+			}
+			uiUpdateHandler.postAtTime(this, SystemClock.uptimeMillis()
+					+ UPDATE_DELAY);
+		}
+	}
+
+	/**
+	 * Listener for the connect button. Starts and stops the packet reader and
+	 * UI updater, and toggles the button label between Connect and Disconnect.
+	 */
+	private final class ConnectButtonOnClickListener implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			// toggle packet reader/UI updater state and button label
+			if (!packetReaderThreadStarted) {
+				titanoboaPacketReader.setPort(Integer
+						.parseInt(((EditText) findViewById(R.id.portEditText))
+								.getText().toString()));
+
+				// start packet reader
+				packetReaderThread = new Thread(titanoboaPacketReader);
+				packetReaderThreadStarted = true;
+				packetReaderThread.start();
+
+				// start UI updater
+				uiUpdateHandler.removeCallbacks(uiUpdateTask);
+				uiUpdateHandler.post(uiUpdateTask);
+
+				// toggle button label to Disconnect
+				Button connectButton = ((Button) v);
+				connectButton.setText(getResources().getString(
+						R.string.disconnect_button_label));
+
+			} else {
+				// stop packet reader
+				packetReaderThreadStarted = false;
+				packetReaderThread.interrupt();
+
+				// stop UI updater
+				uiUpdateHandler.removeCallbacks(uiUpdateTask);
+
+				// toggle button label to Connect
+				Button connectButton = ((Button) v);
+				connectButton.setText(getResources().getString(
+						R.string.connect_button_label));
+			}
+
+		}
+	}
+
+	/**
+	 * On click listener for module buttons. Only used for phone version of app
+	 * so far.
+	 * 
+	 * @author Graham
+	 * 
+	 */
+	private final class ModuleButtonsOnClickListener implements OnClickListener {
+
+		/**
+		 * Switch selected module depending on which radio button was clicked.
+		 */
+		@Override
+		public void onClick(View v) {
+			// change module based on button clicked
+			int buttonId = v.getId();
+			switch (buttonId) {
+			case R.id.module1Radio:
+				selectedModule = 1;
+				break;
+			case R.id.module2Radio:
+				selectedModule = 2;
+				break;
+			case R.id.module3Radio:
+				selectedModule = 3;
+				break;
+			case R.id.module4Radio:
+				selectedModule = 4;
+				break;
+			}
+			// update immediately so it doesn't ever show the wrong data
+			titanoboaModel.updateDataSelected(titanoboaPacketReader
+					.getPackets().get(selectedModule - 1), selectedModule);
+
+			// change header label to appropriate module
+			((TextView) findViewById(R.id.moduleHeader))
+					.setText(getString(R.string.module) + " " + selectedModule);
+		}
 
 	}
 }

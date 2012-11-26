@@ -43,7 +43,9 @@ public class TitanoboaPacketReader extends Thread implements PacketReader {
 	
 	@Override
 	public void finalize() {
-		datagramSocket.close();
+		if (datagramSocket != null) {
+			datagramSocket.close();
+		}
 	}
 
 	@Override

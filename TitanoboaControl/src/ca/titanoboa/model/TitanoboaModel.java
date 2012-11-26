@@ -43,12 +43,18 @@ public class TitanoboaModel implements Model {
 
 	/** {@inheritDoc} **/
 	@Override
-	public void updateData(List<Packet> packets) {
+	public void updateDataAll(List<Packet> packets) {
 		for (int i = 0; i < NUMBER_OF_MODULES; i++)
 			if (packets.size() > i) {
 				Packet updatePacketForModule = packets.get(i);
 				modules.get(i).updateData(updatePacketForModule);
 			}
-
 	}
+	
+	/** {@inheritDoc} **/
+	@Override
+	public void updateDataSelected(Packet packet, int selectedModule) {
+		modules.get(selectedModule - 1).updateData(packet);
+	}
+	
 }
