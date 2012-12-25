@@ -7,9 +7,12 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:gravity">center_horizontal</item>
+        <item name="android:textSize">12dip</item>
     </style>
 
-    <style name="LabelStyle" parent="@android:style/TextAppearance.Small" />
+    <style name="LabelStyle" parent="@android:style/TextAppearance.Small">
+        <item name="android:textSize">12dip</item>
+    </style>
 
     <style name="OddLabelStyle" parent="@style/LabelStyle">
         <item name="android:background">#333333</item>
@@ -19,9 +22,13 @@
         <item name="android:background">#000000</item>
     </style>
 
-    <style name="HeaderStyle" parent="@android:style/TextAppearance.Small" />
+    <style name="HeaderStyle" parent="@android:style/TextAppearance.Small">
+        <item name="android:textSize">12dip</item>
+    </style>
 
-    <style name="SubHeaderStyle" parent="@android:style/TextAppearance.Small" />
+    <style name="SubHeaderStyle" parent="@android:style/TextAppearance.Small">
+        <item name="android:textSize">12dip</item>
+    </style>
 
     <style name="AddressPortLabelStyle" parent="@android:style/TextAppearance.Small" />
     

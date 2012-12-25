@@ -1,7 +1,9 @@
 package ca.titanoboa.model;
 
 import java.util.List;
+import java.util.Map;
 
+import ca.titanoboa.model.head.Head;
 import ca.titanoboa.model.module.Module;
 import ca.titanoboa.packet.Packet;
 
@@ -11,17 +13,17 @@ import ca.titanoboa.packet.Packet;
  *
  */
 public interface Model {
-	/**
+    /**
+     * Get the head.
+     * @return the {@link Head}
+     */
+    Head getHead();
+
+    /**
 	 * Get the list of modules.
 	 * @return a {@link java.util.List} of Modules
 	 */
 	List<Module> getModules();
-
-	/**
-	 * Set the list of modules.
-	 * @param modules a {@link java.util.list} of Modules to set
-	 */
-	void setModules(List<Module> modules);
 	
 	/**
 	 * Update the data for the entire model, module by module.
@@ -29,14 +31,15 @@ public interface Model {
 	 * @param packets
 	 *            The list of packets.
 	 */
-	void updateDataAll(List<Packet> packets);
+	void updateDataAll(Map<String, Packet> packets);
 	
 	/**
 	 * Update the data for just the selected module.
-	 * 
+	 *
+     * @param selectedModule the selected module
 	 * @param packets The list of packets.
 	 */
-	void updateDataSelected(Packet packet, int selectedModule);
+	void updateDataSelected(int selectedModule, Map<String, Packet> packets);
 
 	/**
 	 * Get the selected module.

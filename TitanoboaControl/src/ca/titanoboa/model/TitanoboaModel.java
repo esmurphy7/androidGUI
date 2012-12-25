@@ -1,9 +1,14 @@
 package ca.titanoboa.model;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import ca.titanoboa.model.head.Head;
+import ca.titanoboa.model.head.TitanoboaHead;
 import ca.titanoboa.model.module.Module;
-import ca.titanoboa.packet.Packet;
+import ca.titanoboa.model.module.TitanoboaModule;
+import ca.titanoboa.packet.*;
 
 /**
  * Represents the whole snake.
@@ -14,19 +19,32 @@ import ca.titanoboa.packet.Packet;
 public class TitanoboaModel implements Model {
 
 	public static final int NUMBER_OF_MODULES = 4;
-	private List<Module> modules;
+    private final Head head;
+	private final List<Module> modules;
 	private int selectedModule;
 
-	/** {@inheritDoc} **/
+    /**
+     * Constructor. Sets up modules, which in turn set up vertebrae.
+     */
+    public TitanoboaModel() {
+        head = new TitanoboaHead();
+        modules = new ArrayList<Module>();
+        for (int i = 1; i <= NUMBER_OF_MODULES; i++) {
+            Module module = new TitanoboaModule(i);
+            modules.add(module);
+        }
+    }
+
+    /** {@inheritDoc} **/
+    @Override
+    public Head getHead() {
+        return head;
+    }
+
+    /** {@inheritDoc} **/
 	@Override
 	public List<Module> getModules() {
 		return modules;
-	}
-
-	/** {@inheritDoc} **/
-	@Override
-	public void setModules(List<Module> modules) {
-		this.modules = modules;
 	}
 
 	/** {@inheritDoc} **/
@@ -41,20 +59,31 @@ public class TitanoboaModel implements Model {
 		this.selectedModule = selectedModule;
 	}
 
-	/** {@inheritDoc} **/
-	@Override
-	public void updateDataAll(List<Packet> packets) {
-		for (int i = 0; i < NUMBER_OF_MODULES; i++)
-			if (packets.size() > i) {
-				Packet updatePacketForModule = packets.get(i);
-				modules.get(i).updateData(updatePacketForModule);
-			}
-	}
-	
-	/** {@inheritDoc} **/
-	@Override
-	public void updateDataSelected(Packet packet, int selectedModule) {
-		modules.get(selectedModule - 1).updateData(packet);
-	}
-	
+//	/** {@inheritDoc} **/
+//	@Override
+//	public void updateDataAll(List<Packet> packets) {
+//		for (int i = 0; i < NUMBER_OF_MODULES; i++)
+//			if (packets.size() > i) {
+//				Packet updatePacketForModule = packets.get(i);
+//				modules.get(i).updateData(updatePacketForModule);
+//			}
+//	}
+//
+//	/** {@inheritDoc} **/
+//	@Override
+//	public void updateDataSelected(int selectedModule, List<Packet> packets) {
+//		modules.get(selectedModule - 1).updateData(packet);
+//	}
+
+    /** {@inheritDoc} **/
+    public void updateDataAll(Map<String, Packet> packets) {
+        for (Module module : modules) {
+            module.updateData(packets);
+        }
+    }
+
+    /** {@inheritDoc} **/
+    public void updateDataSelected(int selectedModule, Map<String, Packet> packets) {
+        modules.get(selectedModule - 1).updateData(packets);
+    }
 }

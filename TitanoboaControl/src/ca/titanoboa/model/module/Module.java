@@ -4,6 +4,8 @@
 package ca.titanoboa.model.module;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import android.widget.TextView;
 
@@ -15,26 +17,37 @@ import ca.titanoboa.packet.Packet;
  * 
  */
 public interface Module {
-	public List<Vertebra> getVertebrae();
+	List<Vertebra> getVertebrae();
 
-	public void setVertebrae(List<Vertebra> vertebrae);
+    UUID getLastPacketUuid();
 
-	public int getBatteryLevel();
+    int getModuleNumber();
 
-	public void setBatteryLevel(int batteryLevel);
+	int getBatteryLevel();
 
-	public int getMotorSpeed();
+	void setBatteryLevel(int batteryLevel);
 
-	public void setMotorSpeed(int motorSpeed);
+	int getMotorSpeed();
 
-	public TextView getMotorSpeedView();
+	void setMotorSpeed(int motorSpeed);
 
-	public void setMotorSpeedView(TextView motorSpeedView);
+    int getPressureSensorValue();
 
-	public TextView getBatteryLevelView();
+    void setPressureSensorValue(int pressureSensorValue);
 
-	public void setBatteryLevelView(TextView batteryLevelView);
+	TextView getMotorSpeedView();
+
+	void setMotorSpeedView(TextView motorSpeedView);
+
+	TextView getBatteryLevelView();
+
+	void setBatteryLevelView(TextView batteryLevelView);
+
+    TextView getPressureSensorView();
+
+    void setPressureSensorView(TextView pressureSensorView);
 	
-	public void updateData(Packet packet);
+	void updateData(Map<String, Packet> packets);
 
+    void setVertebraeViews(List<List<TextView>> vertebraeViews);
 }

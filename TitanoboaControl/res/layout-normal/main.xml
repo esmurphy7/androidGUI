@@ -121,6 +121,13 @@
                 android:text="@string/motor_speed" />
 
             <TextView
+                style="@style/EvenLabelStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:text="@string/pressure" />
+
+            <TextView
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -128,25 +135,18 @@
                 android:text=" " />
 
             <TextView
-                style="@style/OddLabelStyle"
+                style="@style/EvenLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"
                 android:text="@string/h_setpoint_angle" />
 
             <TextView
-                style="@style/EvenLabelStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="2dp"
-                android:text="@string/h_current_angle" />
-
-            <TextView
                 style="@style/OddLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"
-                android:text="@string/h_raw_sensor_value" />
+                android:text="@string/h_sensor_value" />
 
             <TextView
                 style="@style/EvenLabelStyle"
@@ -174,24 +174,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"
-                android:text="@string/v_current_angle" />
+                android:text="@string/v_sensor_value" />
 
             <TextView
                 style="@style/EvenLabelStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="2dp"
-                android:text="@string/v_raw_sensor_value" />
-
-            <TextView
-                style="@style/OddLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"
                 android:text="@string/v_sensor_calibration_high" />
 
             <TextView
-                style="@style/EvenLabelStyle"
+                style="@style/OddLabelStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"
@@ -254,6 +247,22 @@
             </TableRow>
 
             <TableRow
+                style="@style/EvenRowStyle"
+                android:layout_width="fill_parent"
+                android:layout_margin="2dp" >
+
+                <TextView
+                    android:id="@+id/pressure"
+                    style="@style/DataStyle"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dip"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:text="@string/data_default" />
+            </TableRow>
+
+            <TableRow
                 style="@style/HeaderRowStyle"
                 android:layout_width="fill_parent"
                 android:layout_margin="2dp" >
@@ -300,7 +309,7 @@
             </TableRow>
 
             <TableRow
-                style="@style/OddRowStyle"
+                style="@style/EvenRowStyle"
                 android:layout_width="fill_parent"
                 android:layout_margin="2dp" >
 
@@ -326,7 +335,7 @@
             </TableRow>
 
             <TableRow
-                style="@style/EvenRowStyle"
+                style="@style/OddRowStyle"
                 android:layout_width="fill_parent"
                 android:layout_margin="2dp" >
 
@@ -348,32 +357,6 @@
 
                 <TextView
                     android:id="@+id/v4_h_current_angle"
-                    style="@style/DataStyle" />
-            </TableRow>
-
-            <TableRow
-                style="@style/OddRowStyle"
-                android:layout_width="fill_parent"
-                android:layout_margin="2dp" >
-
-                <TextView
-                    android:id="@+id/v0_h_raw_sensor_value"
-                    style="@style/DataStyle" />
-
-                <TextView
-                    android:id="@+id/v1_h_raw_sensor_value"
-                    style="@style/DataStyle" />
-
-                <TextView
-                    android:id="@+id/v2_h_raw_sensor_value"
-                    style="@style/DataStyle" />
-
-                <TextView
-                    android:id="@+id/v3_h_raw_sensor_value"
-                    style="@style/DataStyle" />
-
-                <TextView
-                    android:id="@+id/v4_h_raw_sensor_value"
                     style="@style/DataStyle" />
             </TableRow>
 
@@ -487,32 +470,6 @@
                 android:layout_margin="2dp" >
 
                 <TextView
-                    android:id="@+id/v0_v_raw_sensor_value"
-                    style="@style/DataStyle" />
-
-                <TextView
-                    android:id="@+id/v1_v_raw_sensor_value"
-                    style="@style/DataStyle" />
-
-                <TextView
-                    android:id="@+id/v2_v_raw_sensor_value"
-                    style="@style/DataStyle" />
-
-                <TextView
-                    android:id="@+id/v3_v_raw_sensor_value"
-                    style="@style/DataStyle" />
-
-                <TextView
-                    android:id="@+id/v4_v_raw_sensor_value"
-                    style="@style/DataStyle" />
-            </TableRow>
-
-            <TableRow
-                style="@style/OddRowStyle"
-                android:layout_width="fill_parent"
-                android:layout_margin="2dp" >
-
-                <TextView
                     android:id="@+id/v0_v_sensor_calibration_high"
                     style="@style/DataStyle" />
 
@@ -534,7 +491,7 @@
             </TableRow>
 
             <TableRow
-                style="@style/EvenRowStyle"
+                style="@style/OddRowStyle"
                 android:layout_width="fill_parent"
                 android:layout_margin="2dp" >
 

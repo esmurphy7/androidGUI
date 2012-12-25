@@ -1,39 +1,17 @@
 package ca.titanoboa.packet;
 
+import java.util.UUID;
+
 public interface Packet {
-	public byte[] getRawPacket();
+    UUID getUuid();
 
-	public void setRawPacket(byte[] rawPacket);
+    byte[] getRawPacket();
 
-	public byte getByteByNumber(int byteNumber);
+    void setRawPacket(byte[] rawPacket);
 
-	public int getTitanoboaPacketType();
+    byte getByteByNumber(int byteNumber);
 
-	public int getPacketVersion();
+    int getByteAsIntByNumber(int byteNumber);
 
-	public int getModuleNumber();
-
-	public int getBatteryLevel();
-
-	public int getMotorSpeed();
-
-	public int getSetpointAngleH(int vertebra);
-
-	public int getCurrentAngleH(int vertebra);
-
-	public int getRawSensorValueH(int vertebra);
-
-	public int getSensorCalibrationHighH(int vertebra);
-
-	public int getSensorCalibrationLowH(int vertebra);
-
-	public int getSetpointAngleV(int vertebra);
-
-	public int getCurrentAngleV(int vertebra);
-
-	public int getRawSensorValueV(int vertebra);
-
-	public int getSensorCalibrationHighV(int vertebra);
-
-	public int getSensorCalibrationLowV(int vertebra);
+	int getPacketType();
 }

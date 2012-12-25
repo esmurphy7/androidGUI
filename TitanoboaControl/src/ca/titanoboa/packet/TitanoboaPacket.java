@@ -1,24 +1,42 @@
 package ca.titanoboa.packet;
 
+import java.util.UUID;
+
 /**
- * Represents a packet. Each packet contains all the data for a particular
- * module. Most of the get* methods convert the relevant bits to an int for the
- * app. TODO: Add the packet structure.
+ * Generic packet methods. Extended by all specific packet implementations.
  * 
  * @author Graham
- * 
  */
 public class TitanoboaPacket implements Packet {
 
-	private byte[] rawPacket;
+    public static final int VERTEBRAE_PER_MODULE = 5;
+    public static final int PACKET_SIZE = 125;
 
+    private final UUID uuid;
+	private byte[] rawPacket;
+    private int modulePartSize;
+    private int vertebraPartSize;
+
+    /**
+     * Constructor - create empty packet.
+     */
 	public TitanoboaPacket() {
-		this.rawPacket = new byte[170];
+		this(new byte[PACKET_SIZE]);
 	}
 
+    /**
+     * Constructor - create with contents of rawPacket.
+     * @param rawPacket the rawPacket contents to set
+     */
 	public TitanoboaPacket(byte[] rawPacket) {
 		this.rawPacket = rawPacket;
+        this.uuid = UUID.randomUUID();
 	}
+
+    @Override
+    public UUID getUuid() {
+        return uuid;
+    }
 
 	@Override
 	public byte[] getRawPacket() {
@@ -35,79 +53,58 @@ public class TitanoboaPacket implements Packet {
 		return rawPacket[byteNumber];
 	}
 
-	@Override
-	public int getTitanoboaPacketType() {
-		return (int) (rawPacket[0] & 0xff);
-	}
+    @Override
+    public int getByteAsIntByNumber(int byteNumber) {
+        return getByteByNumber(byteNumber) & 0xff;
+    }
 
 	@Override
-	public int getPacketVersion() {
-		return (int) (rawPacket[1] & 0xff);
+	public int getPacketType() {
+		return (getByteByNumber(0) & 0xff);
 	}
 
-	@Override
-	public int getModuleNumber() {
-		return (int) (rawPacket[2] & 0xff);
-	}
+    protected int getModulePartSize() {
+        return modulePartSize;
+    }
 
-	@Override
-	public int getBatteryLevel() {
-		return (int) (((rawPacket[3] & 0xff) << 2) | ((rawPacket[4] & 0xff) >> 6));
-	}
+    protected void setModulePartSize(int modulePartSize) {
+        this.modulePartSize = modulePartSize;
+    }
 
-	@Override
-	public int getMotorSpeed() {
-		return (int) (((rawPacket[5] & 0xff) << 2) | ((rawPacket[6] & 0xff) >> 6));
-	}
+    protected int getVertebraPartSize() {
+        return vertebraPartSize;
+    }
 
-	@Override
-	public int getSetpointAngleH(int vertebra) {
-		return (int) (rawPacket[20 + (vertebra * 30)] & 0xff);
-	}
+    protected void setVertebraPartSize(int vertebraPartSize) {
+        this.vertebraPartSize = vertebraPartSize;
+    }
 
-	@Override
-	public int getCurrentAngleH(int vertebra) {
-		return (int) (rawPacket[21 + (vertebra * 30)] & 0xff);
-	}
+    protected int getByteAsIntForModuleAndVertebra(int byteNumber, int module, int vertebra) {
+        return getByteByNumber(calculateStartByte(byteNumber, module, vertebra)) & 0xff;
+    }
 
-	@Override
-	public int getRawSensorValueH(int vertebra) {
-		return (int) (((rawPacket[22 + (vertebra * 30)] & 0xff) << 2) | ((rawPacket[23 + (vertebra * 30)] & 0xff) >> 6));
-	}
+    protected int getByteAsIntForModule(int byteNumber, int module) {
+        return getByteAsIntForModuleAndVertebra(byteNumber, module, 0);
+    }
 
-	@Override
-	public int getSensorCalibrationHighH(int vertebra) {
-		return (int) (((rawPacket[24 + (vertebra * 30)] & 0xff) << 2) | ((rawPacket[25 + (vertebra * 30)] & 0xff) >> 6));
-	}
+    protected int getUnsignedShortForModuleAndVertebra(int firstByteNumber, int module, int vertebra) {
+        int startByte = calculateStartByte(firstByteNumber, module, vertebra);
+        return ((getByteByNumber(startByte) & 0xff) << 8) | (getByteByNumber(++startByte) & 0xff);
+    }
 
-	@Override
-	public int getSensorCalibrationLowH(int vertebra) {
-		return (int) (((rawPacket[26 + (vertebra * 30)] & 0xff) << 2) | ((rawPacket[27 + (vertebra * 30)] & 0xff) >> 6));
-	}
+    protected int getUnsignedShortForModule(int startByte, int module) {
+        return getUnsignedShortForModuleAndVertebra(startByte, module, 0);
+    }
 
-	@Override
-	public int getSetpointAngleV(int vertebra) {
-		return (int) (rawPacket[28 + (vertebra * 30)] & 0xff);
-	}
+    protected int getUnsignedShortByStartByte(int startByte) {
+        return ((getByteByNumber(startByte) & 0xff) << 8) | (getByteByNumber(++startByte) & 0xff);
+    }
 
-	@Override
-	public int getCurrentAngleV(int vertebra) {
-		return (int) (rawPacket[29 + (vertebra * 30)] & 0xff);
-	}
-
-	@Override
-	public int getRawSensorValueV(int vertebra) {
-		return (int) (((rawPacket[30 + (vertebra * 30)] & 0xff) << 2) | ((rawPacket[31 + (vertebra * 30)] & 0xff) >> 6));
-	}
-
-	@Override
-	public int getSensorCalibrationHighV(int vertebra) {
-		return (int) (((rawPacket[32 + (vertebra * 30)] & 0xff) << 2) | ((rawPacket[33 + (vertebra * 30)] & 0xff) >> 6));
-	}
-
-	@Override
-	public int getSensorCalibrationLowV(int vertebra) {
-		return (int) (((rawPacket[34 + (vertebra * 30)] & 0xff) << 2) | ((rawPacket[35 + (vertebra * 30)] & 0xff) >> 6));
-	}
-
+    private int calculateStartByte(int firstByteNumber, int module, int vertebra) {
+        int startByte = firstByteNumber + (getModulePartSize() * (module - 1));
+        if (vertebra > 0) {
+            startByte += (getVertebraPartSize() * (vertebra - 1));
+        }
+        return startByte;
+    }
 }
