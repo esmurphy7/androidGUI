@@ -4,16 +4,15 @@
     <string name="app_name">TitanoboaControl</string>
     <string name="h_setpoint_angle">H Setpoint</string>
     <string name="h_current_angle">H Curr Angle</string>
-    <string name="h_raw_sensor_value">H Raw Sensor</string>
     <string name="h_sensor_calibration_high">H Calib High</string>
     <string name="h_sensor_calibration_low">H Calib Low</string>
     <string name="v_setpoint_angle">V Setpoint</string>
     <string name="v_current_angle">V Curr Angle</string>
-    <string name="v_raw_sensor_value">V Raw Sensor</string>
     <string name="v_sensor_calibration_high">V Calib High</string>
     <string name="v_sensor_calibration_low">V Calib Low</string>
     <string name="battery_level">Battery Level</string>
     <string name="motor_speed">Motor Speed</string>
+    <string name="pressure">Pressure</string>
     <string name="connect_button_label">Connect</string>
     <string name="disconnect_button_label">Disconnect</string>
     <string name="titanoboa_logo">Titanoboa logo</string>
