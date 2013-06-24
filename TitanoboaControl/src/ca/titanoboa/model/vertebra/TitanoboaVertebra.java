@@ -21,27 +21,26 @@ import ca.titanoboa.packet.*;
 public class TitanoboaVertebra implements Vertebra {
 
     private UUID lastHorizontalSetpointsAndPositionsPacketUuid;
-    private UUID lastVerticalSetpointsAndPositionsPacketUuid;
     private UUID lastHorizontalCalibrationPacketUuid;
     private UUID lastVerticalCalibrationPacketUuid;
 
     private final int parentModuleNumber;
 	private final int vertebraNumber;
     private int horizontalSetpointAngle;
-    private int horizontalSensorValue;
+    private int horizontalAngle;
     private int horizontalHighCalibration;
     private int horizontalLowCalibration;
     private int verticalSetpointAngle;
-    private int verticalSensorValue;
+    private int verticalAngle;
     private int verticalHighCalibration;
     private int verticalLowCalibration;
 
     private TextView horizontalSetpointAngleView;
-    private TextView horizontalSensorValueView;
+    private TextView horizontalAngleView;
     private TextView horizontalHighCalibrationView;
     private TextView horizontalLowCalibrationView;
     private TextView verticalSetpointAngleView;
-    private TextView verticalSensorValueView;
+    private TextView verticalAngleView;
     private TextView verticalHighCalibrationView;
     private TextView verticalLowCalibrationView;
 
@@ -53,11 +52,6 @@ public class TitanoboaVertebra implements Vertebra {
     @Override
     public UUID getLastHorizontalSetpointsAndPositionsPacketUuid() {
         return lastHorizontalSetpointsAndPositionsPacketUuid;
-    }
-
-    @Override
-    public UUID getLastVerticalSetpointsAndPositionsPacketUuid() {
-        return lastVerticalSetpointsAndPositionsPacketUuid;
     }
 
     @Override
@@ -91,13 +85,13 @@ public class TitanoboaVertebra implements Vertebra {
     }
 
     @Override
-    public int getHorizontalSensorValue() {
-        return horizontalSensorValue;
+    public int getHorizontalAngle() {
+        return horizontalAngle;
     }
 
     @Override
-    public void setHorizontalSensorValue(int horizontalSensorValue) {
-        this.horizontalSensorValue = horizontalSensorValue;
+    public void setHorizontalAngle(int horizontalAngle) {
+        this.horizontalAngle = horizontalAngle;
     }
 
     @Override
@@ -131,13 +125,13 @@ public class TitanoboaVertebra implements Vertebra {
     }
 
     @Override
-    public int getVerticalSensorValue() {
-        return verticalSensorValue;
+    public int getVerticalAngle() {
+        return verticalAngle;
     }
 
     @Override
-    public void setVerticalSensorValue(int verticalSensorValue) {
-        this.verticalSensorValue = verticalSensorValue;
+    public void setVerticalAngle(int verticalAngle) {
+        this.verticalAngle = verticalAngle;
     }
 
     @Override
@@ -171,13 +165,13 @@ public class TitanoboaVertebra implements Vertebra {
     }
 
     @Override
-    public TextView getHorizontalSensorValueView() {
-        return horizontalSensorValueView;
+    public TextView getHorizontalAngleView() {
+        return horizontalAngleView;
     }
 
     @Override
-    public void setHorizontalSensorValueView(TextView horizontalSensorValueView) {
-        this.horizontalSensorValueView = horizontalSensorValueView;
+    public void setHorizontalAngleView(TextView horizontalAngleView) {
+        this.horizontalAngleView = horizontalAngleView;
     }
 
     @Override
@@ -211,13 +205,13 @@ public class TitanoboaVertebra implements Vertebra {
     }
 
     @Override
-    public TextView getVerticalSensorValueView() {
-        return verticalSensorValueView;
+    public TextView getVerticalAngleView() {
+        return verticalAngleView;
     }
 
     @Override
-    public void setVerticalSensorValueView(TextView verticalSensorValueView) {
-        this.verticalSensorValueView = verticalSensorValueView;
+    public void setVerticalAngleView(TextView verticalAngleView) {
+        this.verticalAngleView = verticalAngleView;
     }
 
     @Override
@@ -248,33 +242,27 @@ public class TitanoboaVertebra implements Vertebra {
 	 */
 	@Override
 	public void updateData(Map<String, Packet> packets) {
-        HorizontalSetpointsAndPositionsPacket horizontalSetpointsAndPositionsPacket = (HorizontalSetpointsAndPositionsPacket) packets.get(TitanoboaPacketReader.HORIZONTAL_SETPOINTS_AND_POSITIONS_KEY);
-        VerticalSetpointsAndPositionsPacket verticalSetpointsAndPositionsPacket = (VerticalSetpointsAndPositionsPacket) packets.get(TitanoboaPacketReader.VERTICAL_SETPOINTS_AND_POSITIONS_KEY);
+        SetpointsAndPositionsPacket setpointsAndPositionsPacket = (SetpointsAndPositionsPacket) packets.get(TitanoboaPacketReader.SETPOINTS_AND_POSITIONS_KEY);
         HorizontalCalibrationPacket horizontalCalibrationPacket = (HorizontalCalibrationPacket) packets.get(TitanoboaPacketReader.HORIZONTAL_CALIBRATION_KEY);
         VerticalCalibrationPacket verticalCalibrationPacket = (VerticalCalibrationPacket) packets.get(TitanoboaPacketReader.VERTICAL_CALIBRATION_KEY);
 
-        UUID currentHorizontalSetpointsAndPositionsPacketUuid = horizontalSetpointsAndPositionsPacket.getUuid();
-        UUID currentVerticalSetpointsAndPositionsPacketUuid = verticalSetpointsAndPositionsPacket.getUuid();
+        UUID currentSetpointsAndPositionsPacketUuid = setpointsAndPositionsPacket.getUuid();
         UUID currentHorizontalCalibrationPacketUuid = horizontalCalibrationPacket.getUuid();
         UUID currentVerticalCalibrationPacketUuid = verticalCalibrationPacket.getUuid();
 
         // don't bother updating if the packets haven't changed
-        if (!currentHorizontalSetpointsAndPositionsPacketUuid.equals(getLastHorizontalSetpointsAndPositionsPacketUuid())) {
-            lastHorizontalSetpointsAndPositionsPacketUuid = currentHorizontalSetpointsAndPositionsPacketUuid;
+        if (!currentSetpointsAndPositionsPacketUuid.equals(getLastHorizontalSetpointsAndPositionsPacketUuid())) {
+            lastHorizontalSetpointsAndPositionsPacketUuid = currentSetpointsAndPositionsPacketUuid;
 
-            setHorizontalSetpointAngle(horizontalSetpointsAndPositionsPacket.getHorizontalSetpointAngle(getParentModuleNumber(), getVertebraNumber()));
+            setHorizontalSetpointAngle(setpointsAndPositionsPacket.getHorizontalSetpointAngle(getParentModuleNumber(), getVertebraNumber()));
             getHorizontalSetpointAngleView().setText(Integer.toString(getHorizontalSetpointAngle()));
-            setHorizontalSensorValue(horizontalSetpointsAndPositionsPacket.getHorizontalSensorValue(getParentModuleNumber(), getVertebraNumber()));
-            getHorizontalSensorValueView().setText(Integer.toString(getHorizontalSensorValue()));
-        }
+            setHorizontalAngle(setpointsAndPositionsPacket.getHorizontalAngle(getParentModuleNumber(), getVertebraNumber()));
+            getHorizontalAngleView().setText(Integer.toString(getHorizontalAngle()));
 
-        if (!currentVerticalSetpointsAndPositionsPacketUuid.equals(getLastVerticalSetpointsAndPositionsPacketUuid())) {
-            lastVerticalSetpointsAndPositionsPacketUuid = currentVerticalSetpointsAndPositionsPacketUuid;
-
-            setVerticalSetpointAngle(verticalSetpointsAndPositionsPacket.getVerticalSetpointAngle(getParentModuleNumber(), getVertebraNumber()));
+            setVerticalSetpointAngle(setpointsAndPositionsPacket.getVerticalSetpointAngle(getParentModuleNumber(), getVertebraNumber()));
             getVerticalSetpointAngleView().setText(Integer.toString(getVerticalSetpointAngle()));
-            setVerticalSensorValue(verticalSetpointsAndPositionsPacket.getVerticalSensorValue(getParentModuleNumber(), getVertebraNumber()));
-            getVerticalSensorValueView().setText(Integer.toString(getVerticalSensorValue()));
+            setVerticalAngle(setpointsAndPositionsPacket.getVerticalAngle(getParentModuleNumber(), getVertebraNumber()));
+            getVerticalAngleView().setText(Integer.toString(getVerticalAngle()));
         }
 
         if (!currentHorizontalCalibrationPacketUuid.equals(getLastHorizontalCalibrationPacketUuid())) {
@@ -303,11 +291,11 @@ public class TitanoboaVertebra implements Vertebra {
     @Override
     public void setViews(List<TextView> views) {
         setHorizontalSetpointAngleView(views.get(0));
-        setHorizontalSensorValueView(views.get(1));
+        setHorizontalAngleView(views.get(1));
         setHorizontalHighCalibrationView(views.get(2));
         setHorizontalLowCalibrationView(views.get(3));
         setVerticalSetpointAngleView(views.get(4));
-        setVerticalSensorValueView(views.get(5));
+        setVerticalAngleView(views.get(5));
         setVerticalHighCalibrationView(views.get(6));
         setVerticalLowCalibrationView(views.get(7));
     }

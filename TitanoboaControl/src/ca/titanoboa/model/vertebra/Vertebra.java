@@ -10,8 +10,6 @@ import ca.titanoboa.packet.Packet;
 public interface Vertebra {
     UUID getLastHorizontalSetpointsAndPositionsPacketUuid();
 
-    UUID getLastVerticalSetpointsAndPositionsPacketUuid();
-
     UUID getLastHorizontalCalibrationPacketUuid();
 
     UUID getLastVerticalCalibrationPacketUuid();
@@ -24,9 +22,9 @@ public interface Vertebra {
 
     void setHorizontalSetpointAngle(final int horizontalSetpointAngle);
 
-    int getHorizontalSensorValue();
+    int getHorizontalAngle();
 
-    void setHorizontalSensorValue(final int horizontalSensorValue);
+    void setHorizontalAngle(final int horizontalSensorValue);
 
     int getHorizontalHighCalibration();
 
@@ -40,9 +38,9 @@ public interface Vertebra {
 
     void setVerticalSetpointAngle(final int verticalSetpointAngle);
 
-    int getVerticalSensorValue();
+    int getVerticalAngle();
 
-    void setVerticalSensorValue(final int verticalSensorValue);
+    void setVerticalAngle(final int verticalSensorValue);
 
     int getVerticalHighCalibration();
 
@@ -57,9 +55,9 @@ public interface Vertebra {
 
     void setHorizontalSetpointAngleView(TextView horizontalSetpointAngleView);
 
-    TextView getHorizontalSensorValueView();
+    TextView getHorizontalAngleView();
 
-    void setHorizontalSensorValueView(TextView horizontalSensorValueView);
+    void setHorizontalAngleView(TextView horizontalSensorValueView);
 
     TextView getHorizontalHighCalibrationView();
 
@@ -73,9 +71,9 @@ public interface Vertebra {
 
     void setVerticalSetpointAngleView(TextView verticalSetpointAngleView);
 
-    TextView getVerticalSensorValueView();
+    TextView getVerticalAngleView();
 
-    void setVerticalSensorValueView(TextView verticalSensorValueView);
+    void setVerticalAngleView(TextView verticalSensorValueView);
 
     TextView getVerticalHighCalibrationView();
 

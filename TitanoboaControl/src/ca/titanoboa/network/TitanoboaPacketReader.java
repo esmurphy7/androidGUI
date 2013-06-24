@@ -1,14 +1,11 @@
 package ca.titanoboa.network;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.*;
 
-import ca.titanoboa.model.TitanoboaModel;
 import ca.titanoboa.packet.*;
 
 /**
@@ -20,8 +17,7 @@ public class TitanoboaPacketReader extends Thread implements PacketReader {
 
     // map keys for packet types
     public static final String HEAD_AND_MODULE_KEY = "headAndModule";
-    public static final String HORIZONTAL_SETPOINTS_AND_POSITIONS_KEY = "horizontalSetpointsAndPositions";
-    public static final String VERTICAL_SETPOINTS_AND_POSITIONS_KEY = "verticalSetpointsAndPositions";
+    public static final String SETPOINTS_AND_POSITIONS_KEY = "horizontalSetpointsAndPositions";
     public static final String HORIZONTAL_CALIBRATION_KEY = "horizontalCalibration";
     public static final String VERTICAL_CALIBRATION_KEY = "verticalCalibration";
 
@@ -38,8 +34,7 @@ public class TitanoboaPacketReader extends Thread implements PacketReader {
         packets = new HashMap<String, Packet>();
 
         packets.put(HEAD_AND_MODULE_KEY, new TitanoboaHeadAndModuleGeneralPacket(emptyBytes));
-        packets.put(HORIZONTAL_SETPOINTS_AND_POSITIONS_KEY, new TitanoboaHorizontalSetpointsAndPositionsPacket(emptyBytes));
-        packets.put(VERTICAL_SETPOINTS_AND_POSITIONS_KEY, new TitanoboaVerticalSetpointsAndPositionsPacket(emptyBytes));
+        packets.put(SETPOINTS_AND_POSITIONS_KEY, new TitanoboaSetpointsAndPositionsPacket(emptyBytes));
         packets.put(HORIZONTAL_CALIBRATION_KEY, new TitanoboaHorizontalCalibrationPacket(emptyBytes));
         packets.put(VERTICAL_CALIBRATION_KEY, new TitanoboaVerticalCalibrationPacket(emptyBytes));
     }
@@ -86,9 +81,7 @@ public class TitanoboaPacketReader extends Thread implements PacketReader {
                     datagramSocket.close();
                     break;
                 }
-            } catch (SocketException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -101,15 +94,12 @@ public class TitanoboaPacketReader extends Thread implements PacketReader {
                 packets.put(HEAD_AND_MODULE_KEY, new TitanoboaHeadAndModuleGeneralPacket(rawPacket));
                 break;
             case 2:
-                packets.put(HORIZONTAL_SETPOINTS_AND_POSITIONS_KEY, new TitanoboaHorizontalSetpointsAndPositionsPacket(rawPacket));
+                packets.put(SETPOINTS_AND_POSITIONS_KEY, new TitanoboaSetpointsAndPositionsPacket(rawPacket));
                 break;
             case 3:
-                packets.put(VERTICAL_SETPOINTS_AND_POSITIONS_KEY, new TitanoboaVerticalSetpointsAndPositionsPacket(rawPacket));
-                break;
-            case 4:
                 packets.put(HORIZONTAL_CALIBRATION_KEY, new TitanoboaHorizontalCalibrationPacket(rawPacket));
                 break;
-            case 5:
+            case 4:
                 packets.put(VERTICAL_CALIBRATION_KEY, new TitanoboaVerticalCalibrationPacket(rawPacket));
                 break;
             default:

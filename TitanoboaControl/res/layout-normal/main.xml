@@ -10,52 +10,10 @@
         android:orientation="horizontal"
         android:padding="10dip" >
 
-        <ImageView
-            android:id="@+id/titanoboaLogo"
-            style="@android:style/TextAppearance.Large"
-            android:layout_width="150dip"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:contentDescription="@string/titanoboa_logo"
-            android:src="@drawable/titanoboa_logo_white" />
-
-        <EditText
-            android:id="@+id/portEditText"
-            style="@style/AddressPortEditStyle"
-            android:layout_width="50dip"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_toRightOf="@+id/portLabel"
-            android:inputType="numberDecimal"
-            android:text="@string/port_default" />
-
-        <TextView
-            android:id="@+id/portLabel"
-            style="@style/AddressPortLabelStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="30dip"
-            android:layout_alignBaseline="@+id/portEditText"
-            android:layout_alignBottom="@+id/portEditText"
-            android:layout_marginLeft="14dp"
-            android:layout_toRightOf="@+id/titanoboaLogo"
-            android:gravity="center_vertical"
-            android:text="@string/port_label" />
-
-        <Button
-            android:id="@+id/connectButton"
-            style="@style/ConnectButtonStyle"
-            android:layout_width="50dip"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/portEditText"
-            android:layout_alignParentBottom="true"
-            android:layout_alignRight="@+id/portEditText"
-            android:text="@string/connect_button_label" />
-        
         <RadioGroup
             android:id="@+id/radioGroup1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/titanoboaLogo"
             android:orientation="horizontal" >
 
             <RadioButton
@@ -83,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/module4_button_label" />
         </RadioGroup>
-        
+
     </RelativeLayout>
 
     <LinearLayout

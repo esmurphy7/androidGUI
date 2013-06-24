@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -11,17 +12,16 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import ca.titanoboa.*;
 import ca.titanoboa.model.Model;
 import ca.titanoboa.model.TitanoboaModel;
 import ca.titanoboa.model.module.Module;
 import ca.titanoboa.model.vertebra.Vertebra;
 import ca.titanoboa.network.PacketReader;
 import ca.titanoboa.network.TitanoboaPacketReader;
-import ca.titanoboa.packet.*;
+import ca.titanoboa.packet.Packet;
 
 /**
  * The base activity of the whole app!
@@ -66,6 +66,7 @@ public class TitanoboaControlActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.main);
 
 		screenSizeIsXLarge = getResources().getBoolean(R.bool.screen_xlarge);
@@ -90,9 +91,6 @@ public class TitanoboaControlActivity extends Activity {
 		uiUpdateHandler = new Handler();
 		uiUpdateTask = new UIUpdateTask();
 
-		Button connectButton = ((Button) findViewById(R.id.connectButton));
-		connectButton.setOnClickListener(new ConnectButtonOnClickListener());
-
 		if (!screenSizeIsXLarge) {
 			OnClickListener moduleButtonsOnClickListener = new ModuleButtonsOnClickListener();
 			RadioButton module1Radio = ((RadioButton) findViewById(R.id.module1Radio));
@@ -105,6 +103,8 @@ public class TitanoboaControlActivity extends Activity {
 			RadioButton module4Radio = ((RadioButton) findViewById(R.id.module4Radio));
 			module4Radio.setOnClickListener(moduleButtonsOnClickListener);
 		}
+
+        startListening();
 	}
 
 	/**
@@ -483,49 +483,44 @@ public class TitanoboaControlActivity extends Activity {
 		}
 	}
 
-	/**
-	 * Listener for the connect button. Starts and stops the packet reader and
-	 * UI updater, and toggles the button label between Connect and Disconnect.
-	 */
-	private final class ConnectButtonOnClickListener implements OnClickListener {
-		@Override
-		public void onClick(View v) {
-			// toggle packet reader/UI updater state and button label
-			if (!packetReaderThreadStarted) {
-				titanoboaPacketReader.setPort(Integer
-						.parseInt(((EditText) findViewById(R.id.portEditText))
-								.getText().toString()));
+    /**
+     * Starts the packet listening thread.
+     *
+     *  @author Kevin
+     *
+     */
+    public void startListening() {
+        // toggle packet reader/UI updater state and button label
+        if (!packetReaderThreadStarted) {
+            titanoboaPacketReader.setPort(12345);
 
-				// start packet reader
-				packetReaderThread = new Thread(titanoboaPacketReader);
-				packetReaderThreadStarted = true;
-				packetReaderThread.start();
+            // start packet reader
+            packetReaderThread = new Thread(titanoboaPacketReader);
+            packetReaderThreadStarted = true;
+            packetReaderThread.start();
 
-				// start UI updater
-				uiUpdateHandler.removeCallbacks(uiUpdateTask);
-				uiUpdateHandler.post(uiUpdateTask);
+            // start UI updater
+            uiUpdateHandler.removeCallbacks(uiUpdateTask);
+            uiUpdateHandler.post(uiUpdateTask);
+        }
+    }
 
-				// toggle button label to Disconnect
-				Button connectButton = ((Button) v);
-				connectButton.setText(getResources().getString(
-						R.string.disconnect_button_label));
+    /**
+     * Stops the packet listening thread.
+     *
+     *  @author Kevin
+     *
+     */
+    public void stopListening() {
+        if (!packetReaderThreadStarted) {
+            // stop packet reader
+            packetReaderThreadStarted = false;
+            packetReaderThread.interrupt();
 
-			} else {
-				// stop packet reader
-				packetReaderThreadStarted = false;
-				packetReaderThread.interrupt();
-
-				// stop UI updater
-				uiUpdateHandler.removeCallbacks(uiUpdateTask);
-
-				// toggle button label to Connect
-				Button connectButton = ((Button) v);
-				connectButton.setText(getResources().getString(
-						R.string.connect_button_label));
-			}
-
-		}
-	}
+            // stop UI updater
+            uiUpdateHandler.removeCallbacks(uiUpdateTask);
+        }
+    }
 
 	/**
 	 * On click listener for module buttons. Only used for phone version of app

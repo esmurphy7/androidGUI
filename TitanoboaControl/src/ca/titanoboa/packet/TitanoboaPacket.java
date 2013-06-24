@@ -10,7 +10,7 @@ import java.util.UUID;
 public class TitanoboaPacket implements Packet {
 
     public static final int VERTEBRAE_PER_MODULE = 5;
-    public static final int PACKET_SIZE = 125;
+    public static final int PACKET_SIZE = 128;
 
     private final UUID uuid;
 	private byte[] rawPacket;
