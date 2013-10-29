@@ -17,8 +17,9 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import ca.titanoboa.model.Model;
 import ca.titanoboa.model.TitanoboaModel;
-import ca.titanoboa.model.module.Module;
-import ca.titanoboa.model.vertebra.Vertebra;
+import ca.titanoboa.views.ModelViews;
+import ca.titanoboa.views.TitanoboaModelViews;
+import ca.titanoboa.views.module.ModuleViews;
 import ca.titanoboa.network.PacketReader;
 import ca.titanoboa.network.TitanoboaPacketReader;
 import ca.titanoboa.packet.*;
@@ -31,7 +32,8 @@ import ca.titanoboa.packet.*;
  */
 public class TitanoboaControlActivity extends Activity {
 
-	private Model titanoboaModel;
+    private Model titanoboaModel;
+	private ModelViews titanoboaModelViews;
 	private PacketReader titanoboaPacketReader;
 	private Thread packetReaderThread;
 	private boolean packetReaderThreadStarted;
@@ -70,7 +72,7 @@ public class TitanoboaControlActivity extends Activity {
 
 		screenSizeIsXLarge = getResources().getBoolean(R.bool.screen_xlarge);
 
-		titanoboaModel = new TitanoboaModel();
+        titanoboaModel = new TitanoboaModel();
 
 		// initialize differently for a tablet (xlarge) than a phone
 		if (screenSizeIsXLarge) {
@@ -113,12 +115,12 @@ public class TitanoboaControlActivity extends Activity {
 	 */
 	private void setupTitanoboaModelNormal() {
 
-		titanoboaModel = new TitanoboaModel();
+		titanoboaModelViews = new TitanoboaModelViews(titanoboaModel);
 
-        for (Module module : titanoboaModel.getModules()) {
-            module.setBatteryLevelView((TextView) findViewById(R.id.battery_level));
-            module.setMotorSpeedView((TextView) findViewById(R.id.motor_speed));
-            module.setPressureSensorView((TextView) findViewById(R.id.pressure));
+        for (ModuleViews moduleViews : titanoboaModelViews.getModuleViewses()) {
+            moduleViews.setBatteryLevelView((TextView) findViewById(R.id.battery_level));
+            moduleViews.setMotorSpeedView((TextView) findViewById(R.id.motor_speed));
+            moduleViews.setPressureSensorView((TextView) findViewById(R.id.pressure));
 
             // TODO: My view IDs are zero-based but the vertebra ID numbers are 1..n, which should be fixed.
             // TODO: Kill the setVertebraeViews thing and just set the views directly. It doesn't really gain anything and it makes the code less clear.
@@ -180,7 +182,7 @@ public class TitanoboaControlActivity extends Activity {
             vertebra4Views.add((TextView) findViewById(R.id.v4_v_sensor_calibration_low));
             vertebraeViews.add(vertebra4Views);
 
-            module.setVertebraeViews(vertebraeViews);
+            moduleViews.setVertebraViews(vertebraeViews);
         }
 	}
 
@@ -196,13 +198,13 @@ public class TitanoboaControlActivity extends Activity {
 		 * which in turn set up their vertebrae, and from eliminating the actuator objects.
 		 */
 
-		titanoboaModel = new TitanoboaModel();
+		titanoboaModelViews = new TitanoboaModelViews(titanoboaModel);
 
-		Module module1 = titanoboaModel.getModules().get(0);
+		ModuleViews moduleViews1 = titanoboaModelViews.getModuleViewses().get(0);
 
-		module1.setBatteryLevelView((TextView) findViewById(R.id.m1_battery_level));
-		module1.setMotorSpeedView((TextView) findViewById(R.id.m1_motor_speed));
-        module1.setPressureSensorView((TextView) findViewById(R.id.m1_pressure));
+		moduleViews1.setBatteryLevelView((TextView) findViewById(R.id.m1_battery_level));
+		moduleViews1.setMotorSpeedView((TextView) findViewById(R.id.m1_motor_speed));
+        moduleViews1.setPressureSensorView((TextView) findViewById(R.id.m1_pressure));
 
         List<List<TextView>> module1VertebraeViews = new ArrayList<List<TextView>>();
 
@@ -261,13 +263,13 @@ public class TitanoboaControlActivity extends Activity {
         module1Vertebra4Views.add((TextView) findViewById(R.id.m1_v4_v_sensor_calibration_low));
         module1VertebraeViews.add(module1Vertebra4Views);
 
-        module1.setVertebraeViews(module1VertebraeViews);
+        moduleViews1.setVertebraViews(module1VertebraeViews);
 
-        Module module2 = titanoboaModel.getModules().get(1);
+        ModuleViews moduleViews2 = titanoboaModelViews.getModuleViewses().get(1);
 
-        module2.setBatteryLevelView((TextView) findViewById(R.id.m2_battery_level));
-        module2.setMotorSpeedView((TextView) findViewById(R.id.m2_motor_speed));
-        module2.setPressureSensorView((TextView) findViewById(R.id.m2_pressure));
+        moduleViews2.setBatteryLevelView((TextView) findViewById(R.id.m2_battery_level));
+        moduleViews2.setMotorSpeedView((TextView) findViewById(R.id.m2_motor_speed));
+        moduleViews2.setPressureSensorView((TextView) findViewById(R.id.m2_pressure));
 
         List<List<TextView>> module2VertebraeViews = new ArrayList<List<TextView>>();
 
@@ -326,13 +328,13 @@ public class TitanoboaControlActivity extends Activity {
         module2Vertebra4Views.add((TextView) findViewById(R.id.m2_v4_v_sensor_calibration_low));
         module2VertebraeViews.add(module2Vertebra4Views);
 
-        module2.setVertebraeViews(module2VertebraeViews);
+        moduleViews2.setVertebraViews(module2VertebraeViews);
 
-        Module module3 = titanoboaModel.getModules().get(2);
+        ModuleViews moduleViews3 = titanoboaModelViews.getModuleViewses().get(2);
 
-        module3.setBatteryLevelView((TextView) findViewById(R.id.m3_battery_level));
-        module3.setMotorSpeedView((TextView) findViewById(R.id.m3_motor_speed));
-        module3.setPressureSensorView((TextView) findViewById(R.id.m3_pressure));
+        moduleViews3.setBatteryLevelView((TextView) findViewById(R.id.m3_battery_level));
+        moduleViews3.setMotorSpeedView((TextView) findViewById(R.id.m3_motor_speed));
+        moduleViews3.setPressureSensorView((TextView) findViewById(R.id.m3_pressure));
 
         List<List<TextView>> module3VertebraeViews = new ArrayList<List<TextView>>();
 
@@ -391,13 +393,13 @@ public class TitanoboaControlActivity extends Activity {
         module3Vertebra4Views.add((TextView) findViewById(R.id.m3_v4_v_sensor_calibration_low));
         module3VertebraeViews.add(module3Vertebra4Views);
 
-        module3.setVertebraeViews(module3VertebraeViews);
+        moduleViews3.setVertebraViews(module3VertebraeViews);
 
-        Module module4 = titanoboaModel.getModules().get(3);
+        ModuleViews moduleViews4 = titanoboaModelViews.getModuleViewses().get(3);
 
-        module4.setBatteryLevelView((TextView) findViewById(R.id.m4_battery_level));
-        module4.setMotorSpeedView((TextView) findViewById(R.id.m4_motor_speed));
-        module4.setPressureSensorView((TextView) findViewById(R.id.m4_pressure));
+        moduleViews4.setBatteryLevelView((TextView) findViewById(R.id.m4_battery_level));
+        moduleViews4.setMotorSpeedView((TextView) findViewById(R.id.m4_motor_speed));
+        moduleViews4.setPressureSensorView((TextView) findViewById(R.id.m4_pressure));
 
         List<List<TextView>> module4VertebraeViews = new ArrayList<List<TextView>>();
 
@@ -456,7 +458,7 @@ public class TitanoboaControlActivity extends Activity {
         module4Vertebra4Views.add((TextView) findViewById(R.id.m4_v4_v_sensor_calibration_low));
         module4VertebraeViews.add(module4Vertebra4Views);
 
-        module4.setVertebraeViews(module4VertebraeViews);
+        moduleViews4.setVertebraViews(module4VertebraeViews);
 	}
 
 	// TODO: Move these classes to their own files? Would require some reworking
@@ -473,8 +475,10 @@ public class TitanoboaControlActivity extends Activity {
             if ((packets != null) && (!packets.isEmpty())) {
                 if (screenSizeIsXLarge) {
                     titanoboaModel.updateDataAll(packets);
+                    titanoboaModelViews.updateViewsAll();
                 } else {
                     titanoboaModel.updateDataSelected(getSelectedModule(), packets);
+                    titanoboaModelViews.updateViewsSelected(getSelectedModule());
                 }
             }
 
@@ -559,6 +563,7 @@ public class TitanoboaControlActivity extends Activity {
 			}
 			// update immediately so it doesn't ever show the wrong data
 			titanoboaModel.updateDataSelected(selectedModule, titanoboaPacketReader.getPackets());
+            titanoboaModelViews.updateViewsSelected(selectedModule);
 
 			// change header label to appropriate module
 			((TextView) findViewById(R.id.moduleHeader))

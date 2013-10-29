@@ -1,10 +1,10 @@
-package ca.titanoboa.model;
+package ca.titanoboa.views;
 
 import java.util.List;
 import java.util.Map;
 
-import ca.titanoboa.model.head.Head;
-import ca.titanoboa.model.module.Module;
+import ca.titanoboa.views.head.HeadViews;
+import ca.titanoboa.views.module.ModuleViews;
 import ca.titanoboa.packet.Packet;
 
 /**
@@ -12,34 +12,30 @@ import ca.titanoboa.packet.Packet;
  * @author Graham
  *
  */
-public interface Model {
+public interface ModelViews {
     /**
      * Get the head.
-     * @return the {@link Head}
+     * @return the {@link ca.titanoboa.views.head.HeadViews}
      */
-    Head getHead();
+    HeadViews getHeadViews();
 
     /**
 	 * Get the list of modules.
 	 * @return a {@link java.util.List} of Modules
 	 */
-	List<Module> getModules();
+	List<ModuleViews> getModuleViewses();
 	
 	/**
-	 * Update the data for the entire model, module by module.
-	 * 
-	 * @param packets
-	 *            The list of packets.
+	 * Update the views for the entire model, module by module.
 	 */
-	void updateDataAll(Map<String, Packet> packets);
+	void updateViewsAll();
 	
 	/**
-	 * Update the data for just the selected module.
+	 * Update the views for just the selected module.
 	 *
      * @param selectedModule the selected module
-	 * @param packets The list of packets.
 	 */
-	void updateDataSelected(int selectedModule, Map<String, Packet> packets);
+	void updateViewsSelected(int selectedModule);
 
 	/**
 	 * Get the selected module.
