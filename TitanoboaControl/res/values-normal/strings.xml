@@ -3,11 +3,11 @@
 
     <string name="app_name">TitanoboaControl</string>
     <string name="h_setpoint_angle">H Setpoint</string>
-    <string name="h_sensor_value">H Sensor Value</string>
+    <string name="h_curr_angle">H Curr Angle</string>
     <string name="h_sensor_calibration_high">H Calib High</string>
     <string name="h_sensor_calibration_low">H Calib Low</string>
     <string name="v_setpoint_angle">V Setpoint</string>
-    <string name="v_sensor_value">V Sensor Value</string>
+    <string name="v_curr_angle">V Curr Angle</string>
     <string name="v_sensor_calibration_high">V Calib High</string>
     <string name="v_sensor_calibration_low">V Calib Low</string>
     <string name="battery_level">Battery Level</string>

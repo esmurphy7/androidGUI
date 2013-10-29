@@ -106,7 +106,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"
-                android:text="@string/h_current_angle" />
+                android:text="@string/h_curr_angle" />
 
             <TextView
                 style="@style/OddLabelStyle"
@@ -134,7 +134,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"
-                android:text="@string/v_current_angle" />
+                android:text="@string/v_curr_angle" />
 
             <TextView
                 style="@style/OddLabelStyle"

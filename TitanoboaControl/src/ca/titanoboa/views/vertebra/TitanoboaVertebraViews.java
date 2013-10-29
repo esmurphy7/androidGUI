@@ -23,11 +23,11 @@ public class TitanoboaVertebraViews implements VertebraViews {
 	private final int vertebraNumber;
 
     private TextView horizontalSetpointAngleView;
-    private TextView horizontalSensorValueView;
+    private TextView horizontalAngleView;
     private TextView horizontalHighCalibrationView;
     private TextView horizontalLowCalibrationView;
     private TextView verticalSetpointAngleView;
-    private TextView verticalSensorValueView;
+    private TextView verticalAngleView;
     private TextView verticalHighCalibrationView;
     private TextView verticalLowCalibrationView;
 
@@ -59,13 +59,13 @@ public class TitanoboaVertebraViews implements VertebraViews {
     }
 
     @Override
-    public TextView getHorizontalSensorValueView() {
-        return horizontalSensorValueView;
+    public TextView getHorizontalAngleView() {
+        return horizontalAngleView;
     }
 
     @Override
-    public void setHorizontalSensorValueView(TextView horizontalSensorValueView) {
-        this.horizontalSensorValueView = horizontalSensorValueView;
+    public void setHorizontalAngleView(TextView horizontalAngleView) {
+        this.horizontalAngleView = horizontalAngleView;
     }
 
     @Override
@@ -99,13 +99,13 @@ public class TitanoboaVertebraViews implements VertebraViews {
     }
 
     @Override
-    public TextView getVerticalSensorValueView() {
-        return verticalSensorValueView;
+    public TextView getVerticalAngleView() {
+        return verticalAngleView;
     }
 
     @Override
-    public void setVerticalSensorValueView(TextView verticalSensorValueView) {
-        this.verticalSensorValueView = verticalSensorValueView;
+    public void setVerticalAngleView(TextView verticalAngleView) {
+        this.verticalAngleView = verticalAngleView;
     }
 
     @Override
@@ -139,10 +139,10 @@ public class TitanoboaVertebraViews implements VertebraViews {
         }
 
         getHorizontalSetpointAngleView().setText(Integer.toString(vertebra.getHorizontalSetpointAngle()));
-        getHorizontalSensorValueView().setText(Integer.toString(vertebra.getHorizontalSensorValue()));
+        getHorizontalAngleView().setText(Integer.toString(vertebra.getHorizontalAngle()));
 
         getVerticalSetpointAngleView().setText(Integer.toString(vertebra.getVerticalSetpointAngle()));
-        getVerticalSensorValueView().setText(Integer.toString(vertebra.getVerticalSensorValue()));
+        getVerticalAngleView().setText(Integer.toString(vertebra.getVerticalAngle()));
 
         getHorizontalHighCalibrationView().setText(Integer.toString(vertebra.getHorizontalHighCalibration()));
         getHorizontalLowCalibrationView().setText(Integer.toString(vertebra.getHorizontalLowCalibration()));
@@ -160,11 +160,11 @@ public class TitanoboaVertebraViews implements VertebraViews {
     @Override
     public void setViews(List<TextView> views) {
         setHorizontalSetpointAngleView(views.get(0));
-        setHorizontalSensorValueView(views.get(1));
+        setHorizontalAngleView(views.get(1));
         setHorizontalHighCalibrationView(views.get(2));
         setHorizontalLowCalibrationView(views.get(3));
         setVerticalSetpointAngleView(views.get(4));
-        setVerticalSensorValueView(views.get(5));
+        setVerticalAngleView(views.get(5));
         setVerticalHighCalibrationView(views.get(6));
         setVerticalLowCalibrationView(views.get(7));
     }

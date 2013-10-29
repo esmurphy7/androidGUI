@@ -11,8 +11,6 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import ca.titanoboa.model.Model;
@@ -26,96 +24,95 @@ import ca.titanoboa.packet.*;
 
 /**
  * The base activity of the whole app!
- * 
+ *
  * @author Graham
- * 
  */
 public class TitanoboaControlActivity extends Activity {
 
     private Model titanoboaModel;
-	private ModelViews titanoboaModelViews;
-	private PacketReader titanoboaPacketReader;
-	private Thread packetReaderThread;
-	private boolean packetReaderThreadStarted;
-	private Handler uiUpdateHandler;
-	private Runnable uiUpdateTask;
-	private int selectedModule;
-	private boolean screenSizeIsXLarge;
+    private ModelViews titanoboaModelViews;
+    private PacketReader titanoboaPacketReader;
+    private Thread packetReaderThread;
+    private boolean packetReaderThreadStarted;
+    private Handler uiUpdateHandler;
+    private Runnable uiUpdateTask;
+    private int selectedModule;
+    private boolean screenSizeIsXLarge;
 
-	// how often data updates, in ms
-	public static final int UPDATE_DELAY = 1;
+    // how often data updates, in ms
+    public static final int UPDATE_DELAY = 1;
 
-	/**
-	 * Get the selected module.
-	 * 
-	 * @return the selected module
-	 */
-	public int getSelectedModule() {
-		return selectedModule;
-	}
+    /**
+     * Get the selected module.
+     *
+     * @return the selected module
+     */
+    public int getSelectedModule() {
+        return selectedModule;
+    }
 
-	/**
-	 * Set the selected module.
-	 * 
-	 * @param selectedModule
-	 *            the selected module to set
-	 */
-	public void setSelectedModule(int selectedModule) {
-		this.selectedModule = selectedModule;
-	}
+    /**
+     * Set the selected module.
+     *
+     * @param selectedModule the selected module to set
+     */
+    public void setSelectedModule(int selectedModule) {
+        this.selectedModule = selectedModule;
+    }
 
-	/** Called when the activity is first created. */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+    /**
+     * Called when the activity is first created.
+     */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
 
-		screenSizeIsXLarge = getResources().getBoolean(R.bool.screen_xlarge);
+        screenSizeIsXLarge = getResources().getBoolean(R.bool.screen_xlarge);
 
         titanoboaModel = new TitanoboaModel();
 
-		// initialize differently for a tablet (xlarge) than a phone
-		if (screenSizeIsXLarge) {
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-			setSelectedModule(0);
-			setupTitanoboaModelXLarge();
-		} else {
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-			setSelectedModule(1);
-			setupTitanoboaModelNormal();
-		}
+        // initialize differently for a tablet (xlarge) than a phone
+        if (screenSizeIsXLarge) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            setSelectedModule(0);
+            setupTitanoboaModelXLarge();
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            setSelectedModule(1);
+            setupTitanoboaModelNormal();
+        }
 
-		titanoboaPacketReader = new TitanoboaPacketReader();
-		// Packet reader is started via Connect button
-		packetReaderThreadStarted = false;
+        titanoboaPacketReader = new TitanoboaPacketReader();
+        // Packet reader is started via Connect button
+        packetReaderThreadStarted = false;
 
-		uiUpdateHandler = new Handler();
-		uiUpdateTask = new UIUpdateTask();
+        uiUpdateHandler = new Handler();
+        uiUpdateTask = new UIUpdateTask();
 
-		Button connectButton = ((Button) findViewById(R.id.connectButton));
-		connectButton.setOnClickListener(new ConnectButtonOnClickListener());
+        if (!screenSizeIsXLarge) {
+            OnClickListener moduleButtonsOnClickListener = new ModuleButtonsOnClickListener();
+            RadioButton module1Radio = ((RadioButton) findViewById(R.id.module1Radio));
+            module1Radio.setOnClickListener(moduleButtonsOnClickListener);
+            module1Radio.setSelected(true);
+            RadioButton module2Radio = ((RadioButton) findViewById(R.id.module2Radio));
+            module2Radio.setOnClickListener(moduleButtonsOnClickListener);
+            RadioButton module3Radio = ((RadioButton) findViewById(R.id.module3Radio));
+            module3Radio.setOnClickListener(moduleButtonsOnClickListener);
+            RadioButton module4Radio = ((RadioButton) findViewById(R.id.module4Radio));
+            module4Radio.setOnClickListener(moduleButtonsOnClickListener);
+        }
 
-		if (!screenSizeIsXLarge) {
-			OnClickListener moduleButtonsOnClickListener = new ModuleButtonsOnClickListener();
-			RadioButton module1Radio = ((RadioButton) findViewById(R.id.module1Radio));
-			module1Radio.setOnClickListener(moduleButtonsOnClickListener);
-			module1Radio.setSelected(true);
-			RadioButton module2Radio = ((RadioButton) findViewById(R.id.module2Radio));
-			module2Radio.setOnClickListener(moduleButtonsOnClickListener);
-			RadioButton module3Radio = ((RadioButton) findViewById(R.id.module3Radio));
-			module3Radio.setOnClickListener(moduleButtonsOnClickListener);
-			RadioButton module4Radio = ((RadioButton) findViewById(R.id.module4Radio));
-			module4Radio.setOnClickListener(moduleButtonsOnClickListener);
-		}
-	}
+        startListening();
+    }
 
-	/**
-	 * Set up model with modules, vertebrae, and actuators. Normal version for
-	 * phones.
-	 */
-	private void setupTitanoboaModelNormal() {
+    /**
+     * Set up model with modules, vertebrae, and actuators. Normal version for
+     * phones.
+     */
+    private void setupTitanoboaModelNormal() {
 
-		titanoboaModelViews = new TitanoboaModelViews(titanoboaModel);
+        titanoboaModelViews = new TitanoboaModelViews(titanoboaModel);
 
         for (ModuleViews moduleViews : titanoboaModelViews.getModuleViewses()) {
             moduleViews.setBatteryLevelView((TextView) findViewById(R.id.battery_level));
@@ -126,7 +123,7 @@ public class TitanoboaControlActivity extends Activity {
             // TODO: Kill the setVertebraeViews thing and just set the views directly. It doesn't really gain anything and it makes the code less clear.
             // TODO: The old "current angle" row is now "sensor value" so these layout IDs should be updated to match.
             List<List<TextView>> vertebraeViews = new ArrayList<List<TextView>>();
-            
+
             List<TextView> vertebra0Views = new ArrayList<TextView>();
             vertebra0Views.add((TextView) findViewById(R.id.v0_h_setpoint_angle));
             vertebra0Views.add((TextView) findViewById(R.id.v0_h_current_angle));
@@ -184,31 +181,31 @@ public class TitanoboaControlActivity extends Activity {
 
             moduleViews.setVertebraViews(vertebraeViews);
         }
-	}
+    }
 
-	/**
-	 * Set up model with modules, vertebrae, and actuators. XLarge version for
-	 * tablets.
-	 */
-	private void setupTitanoboaModelXLarge() {
-		/*
+    /**
+     * Set up model with modules, vertebrae, and actuators. XLarge version for
+     * tablets.
+     */
+    private void setupTitanoboaModelXLarge() {
+        /*
 		 * This is less nasty than the last version, but I still don't like it. The problem is there's no good way to
 		 * dynamically generate the part after R.id. - there's a findViewByName but its efficiency apparently sucks.
 		 * Most of the improvement from the last version is from having made the model automatically set up its modules
 		 * which in turn set up their vertebrae, and from eliminating the actuator objects.
 		 */
 
-		titanoboaModelViews = new TitanoboaModelViews(titanoboaModel);
+        titanoboaModelViews = new TitanoboaModelViews(titanoboaModel);
 
-		ModuleViews moduleViews1 = titanoboaModelViews.getModuleViewses().get(0);
+        ModuleViews moduleViews1 = titanoboaModelViews.getModuleViewses().get(0);
 
-		moduleViews1.setBatteryLevelView((TextView) findViewById(R.id.m1_battery_level));
-		moduleViews1.setMotorSpeedView((TextView) findViewById(R.id.m1_motor_speed));
+        moduleViews1.setBatteryLevelView((TextView) findViewById(R.id.m1_battery_level));
+        moduleViews1.setMotorSpeedView((TextView) findViewById(R.id.m1_motor_speed));
         moduleViews1.setPressureSensorView((TextView) findViewById(R.id.m1_pressure));
 
         List<List<TextView>> module1VertebraeViews = new ArrayList<List<TextView>>();
 
-        List<TextView> module1Vertebra0Views = new ArrayList<TextView>();        
+        List<TextView> module1Vertebra0Views = new ArrayList<TextView>();
         module1Vertebra0Views.add((TextView) findViewById(R.id.m1_v0_h_setpoint_angle));
         module1Vertebra0Views.add((TextView) findViewById(R.id.m1_v0_h_current_angle));
         module1Vertebra0Views.add((TextView) findViewById(R.id.m1_v0_h_sensor_calibration_high));
@@ -459,17 +456,17 @@ public class TitanoboaControlActivity extends Activity {
         module4VertebraeViews.add(module4Vertebra4Views);
 
         moduleViews4.setVertebraViews(module4VertebraeViews);
-	}
+    }
 
-	// TODO: Move these classes to their own files? Would require some reworking
-	// since they use some Activity methods.
+    // TODO: Move these classes to their own files? Would require some reworking
+    // since they use some Activity methods.
 
-	/**
-	 * A Runnable implementation for updating the UI every UPDATE_DELAY ms.
-	 */
-	private final class UIUpdateTask implements Runnable {
-		@Override
-		public void run() {
+    /**
+     * A Runnable implementation for updating the UI every UPDATE_DELAY ms.
+     */
+    private final class UIUpdateTask implements Runnable {
+        @Override
+        public void run() {
             Map<String, Packet> packets = titanoboaPacketReader.getPackets();
 
             if ((packets != null) && (!packets.isEmpty())) {
@@ -482,72 +479,64 @@ public class TitanoboaControlActivity extends Activity {
                 }
             }
 
-			uiUpdateHandler.postAtTime(this, SystemClock.uptimeMillis()
-					+ UPDATE_DELAY);
-		}
-	}
+            uiUpdateHandler.postAtTime(this, SystemClock.uptimeMillis()
+                    + UPDATE_DELAY);
+        }
+    }
 
-	/**
-	 * Listener for the connect button. Starts and stops the packet reader and
-	 * UI updater, and toggles the button label between Connect and Disconnect.
-	 */
-	private final class ConnectButtonOnClickListener implements OnClickListener {
-		@Override
-		public void onClick(View v) {
-			// toggle packet reader/UI updater state and button label
-			if (!packetReaderThreadStarted) {
-				titanoboaPacketReader.setPort(Integer
-						.parseInt(((EditText) findViewById(R.id.portEditText))
-								.getText().toString()));
+    /**
+     * Starts the packet listening thread.
+     *
+     * @author Kevin
+     */
+    public void startListening() {
+        // toggle packet reader/UI updater state and button label
+        if (!packetReaderThreadStarted) {
+            titanoboaPacketReader.setPort(12345);
 
-				// start packet reader
-				packetReaderThread = new Thread(titanoboaPacketReader);
-				packetReaderThreadStarted = true;
-				packetReaderThread.start();
+            // start packet reader
+            packetReaderThread = new Thread(titanoboaPacketReader);
+            packetReaderThreadStarted = true;
+            packetReaderThread.start();
 
-				// start UI updater
-				uiUpdateHandler.removeCallbacks(uiUpdateTask);
-				uiUpdateHandler.post(uiUpdateTask);
+            // start UI updater
+            uiUpdateHandler.removeCallbacks(uiUpdateTask);
+            uiUpdateHandler.post(uiUpdateTask);
+        }
+    }
 
-				// toggle button label to Disconnect
-				Button connectButton = ((Button) v);
-				connectButton.setText(getResources().getString(
-						R.string.disconnect_button_label));
+    /**
+     * Stops the packet listening thread.
+     *
+     * @author Kevin
+     */
+    public void stopListening() {
+        if (!packetReaderThreadStarted) {
+            // stop packet reader
+            packetReaderThreadStarted = false;
+            packetReaderThread.interrupt();
 
-			} else {
-				// stop packet reader
-				packetReaderThreadStarted = false;
-				packetReaderThread.interrupt();
+            // stop UI updater
+            uiUpdateHandler.removeCallbacks(uiUpdateTask);
+        }
+    }
 
-				// stop UI updater
-				uiUpdateHandler.removeCallbacks(uiUpdateTask);
+    /**
+     * On click listener for module buttons. Only used for phone version of app
+     * so far.
+     *
+     * @author Graham
+     */
+    private final class ModuleButtonsOnClickListener implements OnClickListener {
 
-				// toggle button label to Connect
-				Button connectButton = ((Button) v);
-				connectButton.setText(getResources().getString(
-						R.string.connect_button_label));
-			}
-
-		}
-	}
-
-	/**
-	 * On click listener for module buttons. Only used for phone version of app
-	 * so far.
-	 * 
-	 * @author Graham
-	 * 
-	 */
-	private final class ModuleButtonsOnClickListener implements OnClickListener {
-
-		/**
-		 * Switch selected module depending on which radio button was clicked.
-		 */
-		@Override
-		public void onClick(View v) {
-			// change module based on button clicked
-			int buttonId = v.getId();
-			switch (buttonId) {
+        /**
+         * Switch selected module depending on which radio button was clicked.
+         */
+        @Override
+        public void onClick(View v) {
+            // change module based on button clicked
+            int buttonId = v.getId();
+            switch (buttonId) {
                 case R.id.module1Radio:
                     selectedModule = 1;
                     break;
@@ -560,15 +549,15 @@ public class TitanoboaControlActivity extends Activity {
                 case R.id.module4Radio:
                     selectedModule = 4;
                     break;
-			}
-			// update immediately so it doesn't ever show the wrong data
-			titanoboaModel.updateDataSelected(selectedModule, titanoboaPacketReader.getPackets());
+            }
+            // update immediately so it doesn't ever show the wrong data
+            titanoboaModel.updateDataSelected(selectedModule, titanoboaPacketReader.getPackets());
             titanoboaModelViews.updateViewsSelected(selectedModule);
 
-			// change header label to appropriate module
-			((TextView) findViewById(R.id.moduleHeader))
-					.setText(getString(R.string.module) + " " + selectedModule);
-		}
+            // change header label to appropriate module
+            ((TextView) findViewById(R.id.moduleHeader))
+                    .setText(getString(R.string.module) + " " + selectedModule);
+        }
 
-	}
+    }
 }

@@ -18,9 +18,9 @@ public interface VertebraViews {
 
     void setHorizontalSetpointAngleView(TextView horizontalSetpointAngleView);
 
-    TextView getHorizontalSensorValueView();
+    TextView getHorizontalAngleView();
 
-    void setHorizontalSensorValueView(TextView horizontalSensorValueView);
+    void setHorizontalAngleView(TextView horizontalAngleView);
 
     TextView getHorizontalHighCalibrationView();
 
@@ -34,9 +34,9 @@ public interface VertebraViews {
 
     void setVerticalSetpointAngleView(TextView verticalSetpointAngleView);
 
-    TextView getVerticalSensorValueView();
+    TextView getVerticalAngleView();
 
-    void setVerticalSensorValueView(TextView verticalSensorValueView);
+    void setVerticalAngleView(TextView verticalAngleView);
 
     TextView getVerticalHighCalibrationView();
 
