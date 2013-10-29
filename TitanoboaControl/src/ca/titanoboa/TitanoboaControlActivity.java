@@ -24,8 +24,9 @@ import ca.titanoboa.packet.*;
 
 /**
  * The base activity of the whole app!
- *
+ * 
  * @author Graham
+ * 
  */
 public class TitanoboaControlActivity extends Activity {
 

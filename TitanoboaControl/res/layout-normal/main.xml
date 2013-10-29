@@ -8,8 +8,8 @@
         android:layout_width="fill_parent"
         android:layout_height="118dp"
         android:orientation="horizontal"
-        android:padding="10dip" >
-        
+        android:padding="10dip">
+
         <RadioGroup
             android:id="@+id/radioGroup1"
             android:layout_width="wrap_content"
