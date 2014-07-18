@@ -6,9 +6,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import android.widget.TextView;
-
-import ca.titanoboa.model.vertebra.TitanoboaVertebra;
-import ca.titanoboa.model.vertebra.Vertebra;
 import ca.titanoboa.network.TitanoboaPacketReader;
 import ca.titanoboa.packet.HeadAndModuleGeneralPacket;
 import ca.titanoboa.packet.Packet;
@@ -26,7 +23,6 @@ public class TitanoboaModule implements Module {
 
     private UUID lastPacketUuid;
     private final int moduleNumber;
-	private final List<Vertebra> vertebrae;
 
 	private int batteryLevel;
 	private int motorSpeed;
@@ -38,11 +34,6 @@ public class TitanoboaModule implements Module {
 
     public TitanoboaModule(int moduleNumber) {
         this.moduleNumber = moduleNumber;
-        vertebrae = new ArrayList<Vertebra>();
-        for (int i = 1; i <= VERTEBRAE_PER_MODULE; i++) {
-            Vertebra vertebra = new TitanoboaVertebra(getModuleNumber(), i);
-            vertebrae.add(vertebra);
-        }
     }
 
     @Override
@@ -54,11 +45,6 @@ public class TitanoboaModule implements Module {
     public int getModuleNumber() {
         return moduleNumber;
     }
-
-    @Override
-	public List<Vertebra> getVertebrae() {
-		return vertebrae;
-	}
 
     @Override
 	public int getBatteryLevel() {
@@ -121,9 +107,6 @@ public class TitanoboaModule implements Module {
     }
 
 	/**
-	 * Update data for this module. Tell each vertebra to update itself in turn,
-	 * passing it the appropriate packets.
-     *
 	 * @param packets The packets to update from.
 	 */
     @Override
@@ -138,24 +121,14 @@ public class TitanoboaModule implements Module {
             batteryLevel = headAndModuleGeneralPacket.getModuleBatteryVoltage(getModuleNumber());
             pressureSensorValue = headAndModuleGeneralPacket.getModulePressureSensorValue(getModuleNumber());
 
-		    motorSpeedView.setText(Integer.toString(motorSpeed));
-		    batteryLevelView.setText(Integer.toString(batteryLevel));
-            pressureSensorView.setText(Integer.toString(pressureSensorValue));
+            /* The activity now is responsible for the views */
+		    //motorSpeedView.setText(Integer.toString(motorSpeed));
+		    //batteryLevelView.setText(Integer.toString(batteryLevel));
+            //pressureSensorView.setText(Integer.toString(pressureSensorValue));
         }
 
-        for (Vertebra vertebra : vertebrae) {
-            vertebra.updateData(packets);
-        }
 
 	}
 
-    @Override
-    public void setVertebraeViews(List<List<TextView>> vertebraeViews) {
-        int i = 0;
-        for (Vertebra vertebra : getVertebrae()) {
-            vertebra.setViews(vertebraeViews.get(i));
-            i++;
-        }
-    }
 
 }

@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import android.widget.TextView;
 
-import ca.titanoboa.model.vertebra.Vertebra;
 import ca.titanoboa.packet.Packet;
 
 /**
@@ -17,7 +16,6 @@ import ca.titanoboa.packet.Packet;
  * 
  */
 public interface Module {
-	List<Vertebra> getVertebrae();
 
     UUID getLastPacketUuid();
 
@@ -49,5 +47,4 @@ public interface Module {
 	
 	void updateData(Map<String, Packet> packets);
 
-    void setVertebraeViews(List<List<TextView>> vertebraeViews);
 }

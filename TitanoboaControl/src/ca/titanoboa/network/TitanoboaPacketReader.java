@@ -1,14 +1,11 @@
 package ca.titanoboa.network;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.*;
 
-import ca.titanoboa.model.TitanoboaModel;
 import ca.titanoboa.packet.*;
 
 /**

@@ -1,7 +1,6 @@
 package ca.titanoboa;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
@@ -15,10 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import ca.titanoboa.model.Model;
-import ca.titanoboa.model.TitanoboaModel;
-import ca.titanoboa.model.module.Module;
-import ca.titanoboa.model.vertebra.Vertebra;
+
+import ca.titanoboa.model.module.TitanoboaModule;
 import ca.titanoboa.network.PacketReader;
 import ca.titanoboa.network.TitanoboaPacketReader;
 import ca.titanoboa.packet.*;
@@ -31,7 +28,12 @@ import ca.titanoboa.packet.*;
  */
 public class TitanoboaControlActivity extends Activity {
 
-	private Model titanoboaModel;
+    //=========== Constants =======================
+    public static final int NUMBER_OF_MODULES = 4;
+    public static final int UPDATE_DELAY = 1; // how often data updates, in ms
+
+    //=========== Attributes =======================
+	private ArrayList<TitanoboaModule> modules;
 	private PacketReader titanoboaPacketReader;
 	private Thread packetReaderThread;
 	private boolean packetReaderThreadStarted;
@@ -40,28 +42,27 @@ public class TitanoboaControlActivity extends Activity {
 	private int selectedModule;
 	private boolean screenSizeIsXLarge;
 
-	// how often data updates, in ms
-	public static final int UPDATE_DELAY = 1;
+    //=========== Views =======================
+	private TextView batteryLevelView;
+    //TODO: include view for battery image
 
-	/**
-	 * Get the selected module.
-	 * 
-	 * @return the selected module
-	 */
+
+    //============ Getters & Setters ==============
 	public int getSelectedModule() {
 		return selectedModule;
 	}
-
-	/**
-	 * Set the selected module.
-	 * 
-	 * @param selectedModule
-	 *            the selected module to set
-	 */
 	public void setSelectedModule(int selectedModule) {
 		this.selectedModule = selectedModule;
 	}
 
+    public TextView getBatteryLevelView() {
+        return batteryLevelView;
+    }
+    public void setBatteryLevelView(TextView batteryLevelView) {
+        this.batteryLevelView = batteryLevelView;
+    }
+
+    //============ Methods =======================
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -70,7 +71,12 @@ public class TitanoboaControlActivity extends Activity {
 
 		screenSizeIsXLarge = getResources().getBoolean(R.bool.screen_xlarge);
 
-		titanoboaModel = new TitanoboaModel();
+		// initialize modules (i starts at 1 since module constructor cannot handle values of 0 for i
+        for(int i=1; i<NUMBER_OF_MODULES; i++)
+        {
+            TitanoboaModule module = new TitanoboaModule(i);
+            modules.add(module);
+        }
 
 		// initialize differently for a tablet (xlarge) than a phone
 		if (screenSizeIsXLarge) {
@@ -113,89 +119,35 @@ public class TitanoboaControlActivity extends Activity {
 	 */
 	private void setupTitanoboaModelNormal() {
 
-		titanoboaModel = new TitanoboaModel();
-
-        for (Module module : titanoboaModel.getModules()) {
-            module.setBatteryLevelView((TextView) findViewById(R.id.battery_level));
-            module.setMotorSpeedView((TextView) findViewById(R.id.motor_speed));
-            module.setPressureSensorView((TextView) findViewById(R.id.pressure));
-
-            // TODO: My view IDs are zero-based but the vertebra ID numbers are 1..n, which should be fixed.
-            // TODO: Kill the setVertebraeViews thing and just set the views directly. It doesn't really gain anything and it makes the code less clear.
-            // TODO: The old "current angle" row is now "sensor value" so these layout IDs should be updated to match.
-            List<List<TextView>> vertebraeViews = new ArrayList<List<TextView>>();
-            
-            List<TextView> vertebra0Views = new ArrayList<TextView>();
-            vertebra0Views.add((TextView) findViewById(R.id.v0_h_setpoint_angle));
-            vertebra0Views.add((TextView) findViewById(R.id.v0_h_current_angle));
-            vertebra0Views.add((TextView) findViewById(R.id.v0_h_sensor_calibration_high));
-            vertebra0Views.add((TextView) findViewById(R.id.v0_h_sensor_calibration_low));
-            vertebra0Views.add((TextView) findViewById(R.id.v0_v_setpoint_angle));
-            vertebra0Views.add((TextView) findViewById(R.id.v0_v_current_angle));
-            vertebra0Views.add((TextView) findViewById(R.id.v0_v_sensor_calibration_high));
-            vertebra0Views.add((TextView) findViewById(R.id.v0_v_sensor_calibration_low));
-            vertebraeViews.add(vertebra0Views);
-
-            List<TextView> vertebra1Views = new ArrayList<TextView>();
-            vertebra1Views.add((TextView) findViewById(R.id.v1_h_setpoint_angle));
-            vertebra1Views.add((TextView) findViewById(R.id.v1_h_current_angle));
-            vertebra1Views.add((TextView) findViewById(R.id.v1_h_sensor_calibration_high));
-            vertebra1Views.add((TextView) findViewById(R.id.v1_h_sensor_calibration_low));
-            vertebra1Views.add((TextView) findViewById(R.id.v1_v_setpoint_angle));
-            vertebra1Views.add((TextView) findViewById(R.id.v1_v_current_angle));
-            vertebra1Views.add((TextView) findViewById(R.id.v1_v_sensor_calibration_high));
-            vertebra1Views.add((TextView) findViewById(R.id.v1_v_sensor_calibration_low));
-            vertebraeViews.add(vertebra1Views);
-
-            List<TextView> vertebra2Views = new ArrayList<TextView>();
-            vertebra2Views.add((TextView) findViewById(R.id.v2_h_setpoint_angle));
-            vertebra2Views.add((TextView) findViewById(R.id.v2_h_current_angle));
-            vertebra2Views.add((TextView) findViewById(R.id.v2_h_sensor_calibration_high));
-            vertebra2Views.add((TextView) findViewById(R.id.v2_h_sensor_calibration_low));
-            vertebra2Views.add((TextView) findViewById(R.id.v2_v_setpoint_angle));
-            vertebra2Views.add((TextView) findViewById(R.id.v2_v_current_angle));
-            vertebra2Views.add((TextView) findViewById(R.id.v2_v_sensor_calibration_high));
-            vertebra2Views.add((TextView) findViewById(R.id.v2_v_sensor_calibration_low));
-            vertebraeViews.add(vertebra2Views);
-
-            List<TextView> vertebra3Views = new ArrayList<TextView>();
-            vertebra3Views.add((TextView) findViewById(R.id.v3_h_setpoint_angle));
-            vertebra3Views.add((TextView) findViewById(R.id.v3_h_current_angle));
-            vertebra3Views.add((TextView) findViewById(R.id.v3_h_sensor_calibration_high));
-            vertebra3Views.add((TextView) findViewById(R.id.v3_h_sensor_calibration_low));
-            vertebra3Views.add((TextView) findViewById(R.id.v3_v_setpoint_angle));
-            vertebra3Views.add((TextView) findViewById(R.id.v3_v_current_angle));
-            vertebra3Views.add((TextView) findViewById(R.id.v3_v_sensor_calibration_high));
-            vertebra3Views.add((TextView) findViewById(R.id.v3_v_sensor_calibration_low));
-            vertebraeViews.add(vertebra3Views);
-
-            List<TextView> vertebra4Views = new ArrayList<TextView>();
-            vertebra4Views.add((TextView) findViewById(R.id.v4_h_setpoint_angle));
-            vertebra4Views.add((TextView) findViewById(R.id.v4_h_current_angle));
-            vertebra4Views.add((TextView) findViewById(R.id.v4_h_sensor_calibration_high));
-            vertebra4Views.add((TextView) findViewById(R.id.v4_h_sensor_calibration_low));
-            vertebra4Views.add((TextView) findViewById(R.id.v4_v_setpoint_angle));
-            vertebra4Views.add((TextView) findViewById(R.id.v4_v_current_angle));
-            vertebra4Views.add((TextView) findViewById(R.id.v4_v_sensor_calibration_high));
-            vertebra4Views.add((TextView) findViewById(R.id.v4_v_sensor_calibration_low));
-            vertebraeViews.add(vertebra4Views);
-
-            module.setVertebraeViews(vertebraeViews);
+        // initialize modules (i starts at 1 since module constructor cannot handle values of 0 for i
+        for(int i=1; i<NUMBER_OF_MODULES; i++)
+        {
+            TitanoboaModule module = new TitanoboaModule(i);
+            modules.add(module);
         }
-	}
+
+        setBatteryLevelView((TextView) findViewById(R.id.battery_level));
+        //module.setMotorSpeedView((TextView) findViewById(R.id.motor_speed));
+        //module.setPressureSensorView((TextView) findViewById(R.id.pressure));
+
+        // TODO: My view IDs are zero-based but the vertebra ID numbers are 1..n, which should be fixed.
+        // TODO: Kill the setVertebraeViews thing and just set the views directly. It doesn't really gain anything and it makes the code less clear.
+        // TODO: The old "current angle" row is now "sensor value" so these layout IDs should be updated to match.
+    }
 
 	/**
 	 * Set up model with modules, vertebrae, and actuators. XLarge version for
 	 * tablets.
 	 */
-	private void setupTitanoboaModelXLarge() {
-		/*
-		 * This is less nasty than the last version, but I still don't like it. The problem is there's no good way to
-		 * dynamically generate the part after R.id. - there's a findViewByName but its efficiency apparently sucks.
-		 * Most of the improvement from the last version is from having made the model automatically set up its modules
-		 * which in turn set up their vertebrae, and from eliminating the actuator objects.
-		 */
 
+	private void setupTitanoboaModelXLarge() {
+
+		 //This is less nasty than the last version, but I still don't like it. The problem is there's no good way to
+		 //dynamically generate the part after R.id. - there's a findViewByName but its efficiency apparently sucks.
+		 //Most of the improvement from the last version is from having made the model automatically set up its modules
+		// which in turn set up their vertebrae, and from eliminating the actuator objects.
+
+        /*
 		titanoboaModel = new TitanoboaModel();
 
 		Module module1 = titanoboaModel.getModules().get(0);
@@ -457,9 +409,11 @@ public class TitanoboaControlActivity extends Activity {
         module4VertebraeViews.add(module4Vertebra4Views);
 
         module4.setVertebraeViews(module4VertebraeViews);
+        */
 	}
 
-	// TODO: Move these classes to their own files? Would require some reworking
+
+    // TODO: Move these classes to their own files? Would require some reworking
 	// since they use some Activity methods.
 
 	/**
@@ -472,9 +426,12 @@ public class TitanoboaControlActivity extends Activity {
 
             if ((packets != null) && (!packets.isEmpty())) {
                 if (screenSizeIsXLarge) {
-                    titanoboaModel.updateDataAll(packets);
+                    //titanoboaModel.updateDataAll(packets);
                 } else {
-                    titanoboaModel.updateDataSelected(getSelectedModule(), packets);
+                    //titanoboaModel.updateDataSelected(getSelectedModule(), packets);
+                    updateBatteryLevels(packets);
+                    updateBatteryLevelView();
+                    //TODO: update battery image view
                 }
             }
 
@@ -558,12 +515,29 @@ public class TitanoboaControlActivity extends Activity {
                     break;
 			}
 			// update immediately so it doesn't ever show the wrong data
-			titanoboaModel.updateDataSelected(selectedModule, titanoboaPacketReader.getPackets());
+			//titanoboaModel.updateDataSelected(selectedModule, titanoboaPacketReader.getPackets());
+            updateBatteryLevels(titanoboaPacketReader.getPackets());
+            updateBatteryLevelView();
 
 			// change header label to appropriate module
-			((TextView) findViewById(R.id.moduleHeader))
-					.setText(getString(R.string.module) + " " + selectedModule);
+			//((TextView) findViewById(R.id.moduleHeader))
+			//		.setText(getString(R.string.module) + " " + selectedModule);
 		}
-
 	}
+    /**
+    Update battery levels of all modules
+     */
+    public void updateBatteryLevels(Map<String, Packet> packets){
+        for(TitanoboaModule module : modules){
+            module.updateData(packets);
+        }
+    }
+    /**
+    Update the batteryLevelView based on the currently selected module
+     */
+    public void updateBatteryLevelView(){
+        TitanoboaModule selectedModule = modules.get(getSelectedModule());
+        batteryLevelView.setText(Integer.toString(selectedModule.getBatteryLevel()));
+    }
+
 }
