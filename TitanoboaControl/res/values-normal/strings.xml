@@ -33,4 +33,13 @@
     <string name="module3_button_label">3</string>
     <string name="module4_button_label">4</string>
 
+    <string name="module_dropdown_prompt">Select Module</string>
+    <string-array name="module_array">
+        <item>Module 1</item>
+        <item>Module 2</item>
+        <item>Module 3</item>
+        <item>Module 4</item>
+        <item>Module 5</item>
+    </string-array>
+
 </resources>

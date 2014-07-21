@@ -50,45 +50,25 @@
             android:layout_alignParentBottom="true"
             android:layout_alignRight="@+id/portEditText"
             android:text="@string/connect_button_label" />
-        
-        <RadioGroup
+
+        <Spinner
             android:id="@+id/radioGroup1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/titanoboaLogo"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:layout_toLeftOf="@+id/connectButton"
+            android:prompt="@string/module_dropdown_prompt"
+            android:entries="@array/module_array" />
 
-            <RadioButton
-                android:id="@+id/module1Radio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/module1_button_label" />
-
-            <RadioButton
-                android:id="@+id/module2Radio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/module2_button_label" />
-
-            <RadioButton
-                android:id="@+id/module3Radio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/module3_button_label" />
-
-            <RadioButton
-                android:id="@+id/module4Radio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/module4_button_label" />
-        </RadioGroup>
-        
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="293dp"></RelativeLayout>
+        android:layout_height="293dp">
+
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"

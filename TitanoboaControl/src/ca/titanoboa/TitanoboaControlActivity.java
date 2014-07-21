@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -29,7 +30,7 @@ import ca.titanoboa.packet.*;
 public class TitanoboaControlActivity extends Activity {
 
     //=========== Constants =======================
-    public static final int NUMBER_OF_MODULES = 4;
+    public static final int NUMBER_OF_MODULES = 5;
     public static final int UPDATE_DELAY = 1; // how often data updates, in ms
 
     //=========== Attributes =======================
@@ -70,7 +71,7 @@ public class TitanoboaControlActivity extends Activity {
 		setContentView(R.layout.main);
 
 		screenSizeIsXLarge = getResources().getBoolean(R.bool.screen_xlarge);
-
+        modules = new ArrayList<TitanoboaModule>();
 		// initialize modules (i starts at 1 since module constructor cannot handle values of 0 for i
         for(int i=1; i<NUMBER_OF_MODULES; i++)
         {
@@ -100,16 +101,7 @@ public class TitanoboaControlActivity extends Activity {
 		connectButton.setOnClickListener(new ConnectButtonOnClickListener());
 
 		if (!screenSizeIsXLarge) {
-			OnClickListener moduleButtonsOnClickListener = new ModuleButtonsOnClickListener();
-			RadioButton module1Radio = ((RadioButton) findViewById(R.id.module1Radio));
-			module1Radio.setOnClickListener(moduleButtonsOnClickListener);
-			module1Radio.setSelected(true);
-			RadioButton module2Radio = ((RadioButton) findViewById(R.id.module2Radio));
-			module2Radio.setOnClickListener(moduleButtonsOnClickListener);
-			RadioButton module3Radio = ((RadioButton) findViewById(R.id.module3Radio));
-			module3Radio.setOnClickListener(moduleButtonsOnClickListener);
-			RadioButton module4Radio = ((RadioButton) findViewById(R.id.module4Radio));
-			module4Radio.setOnClickListener(moduleButtonsOnClickListener);
+			//TODO: init module spinner dynamically and attach listener, see http://www.mkyong.com/android/android-spinner-drop-down-list-example/
 		}
 	}
 
@@ -485,45 +477,26 @@ public class TitanoboaControlActivity extends Activity {
 	}
 
 	/**
-	 * On click listener for module buttons. Only used for phone version of app
+	 * On item selected listener for module spinner. Only used for phone version of app
 	 * so far.
-	 * 
+	 *
 	 * @author Graham
-	 * 
+	 *
 	 */
-	private final class ModuleButtonsOnClickListener implements OnClickListener {
+	private final class moduleSpinnerItemSelected implements AdapterView.OnItemSelectedListener {
 
-		/**
-		 * Switch selected module depending on which radio button was clicked.
-		 */
-		@Override
-		public void onClick(View v) {
-			// change module based on button clicked
-			int buttonId = v.getId();
-			switch (buttonId) {
-                case R.id.module1Radio:
-                    selectedModule = 1;
-                    break;
-                case R.id.module2Radio:
-                    selectedModule = 2;
-                    break;
-                case R.id.module3Radio:
-                    selectedModule = 3;
-                    break;
-                case R.id.module4Radio:
-                    selectedModule = 4;
-                    break;
-			}
-			// update immediately so it doesn't ever show the wrong data
-			//titanoboaModel.updateDataSelected(selectedModule, titanoboaPacketReader.getPackets());
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             updateBatteryLevels(titanoboaPacketReader.getPackets());
             updateBatteryLevelView();
+        }
 
-			// change header label to appropriate module
-			//((TextView) findViewById(R.id.moduleHeader))
-			//		.setText(getString(R.string.module) + " " + selectedModule);
-		}
-	}
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            updateBatteryLevels(titanoboaPacketReader.getPackets());
+            updateBatteryLevelView();
+        }
+    }
     /**
     Update battery levels of all modules
      */
