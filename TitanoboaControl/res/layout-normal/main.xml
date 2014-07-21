@@ -63,10 +63,13 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="293dp">
-    </RelativeLayout>
+        android:layout_height="293dp"
+        android:orientation="vertical"
+        android:entries="@array/module_array">
+
+    </ListView>
 
     <RelativeLayout
         android:layout_width="match_parent"

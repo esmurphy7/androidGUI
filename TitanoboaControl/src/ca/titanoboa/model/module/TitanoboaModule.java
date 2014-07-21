@@ -20,6 +20,7 @@ import ca.titanoboa.packet.Packet;
  */
 public class TitanoboaModule implements Module {
 	public static final int VERTEBRAE_PER_MODULE = 5;
+    private static final int MAX_BATTERY_LEVEL = 25000; //10 bit voltage value
 
     private UUID lastPacketUuid;
     private final int moduleNumber;
@@ -55,6 +56,10 @@ public class TitanoboaModule implements Module {
 	public void setBatteryLevel(int batteryLevel) {
 		this.batteryLevel = batteryLevel;
 	}
+
+    public int getBatteryLevelAsPercent(){
+        return (MAX_BATTERY_LEVEL/batteryLevel)*100;
+    }
 
     @Override
 	public int getMotorSpeed() {
