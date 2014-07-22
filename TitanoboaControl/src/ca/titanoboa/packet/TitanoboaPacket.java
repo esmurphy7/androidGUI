@@ -87,6 +87,7 @@ public class TitanoboaPacket implements Packet {
         return getByteAsIntForModuleAndVertebra(byteNumber, module, 0);
     }
 
+    //TODO: remove vertabra parameter since getByteAsIntForModule has '0' hardcoded
     protected int getUnsignedShortForModuleAndVertebra(int firstByteNumber, int module, int vertebra) {
         int startByte = calculateStartByte(firstByteNumber, module, vertebra);
         return ((getByteByNumber(startByte) & 0xff) << 8) | (getByteByNumber(++startByte) & 0xff);
