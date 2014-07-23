@@ -120,17 +120,12 @@ public class TitanoboaModule implements Module {
         UUID currentPacketUuid = headAndModuleGeneralPacket.getUuid();
 
         // don't bother updating if the packet hasn't changed
-        if (!currentPacketUuid.equals(getLastPacketUuid())) {
+        //if (!currentPacketUuid.equals(getLastPacketUuid())) {
             lastPacketUuid = currentPacketUuid;
             motorSpeed = headAndModuleGeneralPacket.getModuleMotorSpeed(getModuleNumber());
             batteryLevel = headAndModuleGeneralPacket.getModuleBatteryVoltage(getModuleNumber());
             pressureSensorValue = headAndModuleGeneralPacket.getModulePressureSensorValue(getModuleNumber());
-
-            /* The activity now is responsible for the views */
-		    //motorSpeedView.setText(Integer.toString(motorSpeed));
-		    //batteryLevelView.setText(Integer.toString(batteryLevel));
-            //pressureSensorView.setText(Integer.toString(pressureSensorValue));
-        }
+        //}
 
 
 	}

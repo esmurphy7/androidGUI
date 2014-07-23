@@ -1,9 +1,11 @@
 package ca.titanoboa;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,7 +15,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import ca.titanoboa.model.module.TitanoboaModule;
@@ -42,6 +44,8 @@ public class TitanoboaControlActivity extends Activity {
 	private Runnable uiUpdateTask;
 	private int selectedModule;
 	private boolean screenSizeIsXLarge;
+    private boolean isSimulation;
+    private Simulation simulation;
 
     //=========== Views =======================
 	private TextView batteryLevelView;
@@ -68,7 +72,7 @@ public class TitanoboaControlActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+        setContentView(R.layout.main);
 
 		screenSizeIsXLarge = getResources().getBoolean(R.bool.screen_xlarge);
         modules = new ArrayList<TitanoboaModule>();
@@ -90,20 +94,35 @@ public class TitanoboaControlActivity extends Activity {
 			setupTitanoboaModelNormal();
 		}
 
-		titanoboaPacketReader = new TitanoboaPacketReader();
-		// Packet reader is started via Connect button
-		packetReaderThreadStarted = false;
+        //receive the intent passed by the configPromptActivity to check if this should be treated as a simulation environment
+        Intent intent = getIntent();
+        isSimulation = intent.getBooleanExtra(ConfigPromptActivity.IS_SIMULATION, false);
 
-		uiUpdateHandler = new Handler();
-		uiUpdateTask = new UIUpdateTask();
+        //run simulation thread if simulation environment has been selected, otherwise run standard reader thread
+        if(isSimulation){
+            simulation = new Simulation();
+            simulation.start();
+            uiUpdateHandler = new Handler();
+            uiUpdateTask = new UIUpdateTask();
+            uiUpdateHandler.removeCallbacks(uiUpdateTask);
+            uiUpdateHandler.post(uiUpdateTask);
+        }else {
+            titanoboaPacketReader = new TitanoboaPacketReader();
+            // Packet reader is started via Connect button
+            packetReaderThreadStarted = false;
 
-		Button connectButton = ((Button) findViewById(R.id.connectButton));
-		connectButton.setOnClickListener(new ConnectButtonOnClickListener());
+            uiUpdateHandler = new Handler();
+            uiUpdateTask = new UIUpdateTask();
+
+            Button connectButton = ((Button) findViewById(R.id.connectButton));
+            connectButton.setOnClickListener(new ConnectButtonOnClickListener());
+        }
 
 		if (!screenSizeIsXLarge) {
-			//TODO: init module spinner dynamically and attach listener, see http://www.mkyong.com/android/android-spinner-drop-down-list-example/
+			//TODO: init listview dynamically and attach listener, see http://www.mkyong.com/android/android-spinner-drop-down-list-example/
 		}
 	}
+
 
 	/**
 	 * Set up model with modules, vertebrae, and actuators. Normal version for
@@ -414,15 +433,19 @@ public class TitanoboaControlActivity extends Activity {
 	private final class UIUpdateTask implements Runnable {
 		@Override
 		public void run() {
-            Map<String, Packet> packets = titanoboaPacketReader.getPackets();
+            Map<String, Packet> packets = new HashMap<String, Packet>();
+            if(isSimulation){
+                packets = simulation.getPackets();
+            }else {
+                packets = titanoboaPacketReader.getPackets();
+            }
 
             if ((packets != null) && (!packets.isEmpty())) {
                 if (screenSizeIsXLarge) {
                     //titanoboaModel.updateDataAll(packets);
                 } else {
-                    //titanoboaModel.updateDataSelected(getSelectedModule(), packets);
                     updateBatteryLevels(packets);
-                    updateBatteryLevelView();
+                    updateBatteryLevelViews();
                     //TODO: update battery image view
                 }
             }
@@ -488,13 +511,13 @@ public class TitanoboaControlActivity extends Activity {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             updateBatteryLevels(titanoboaPacketReader.getPackets());
-            updateBatteryLevelView();
+            updateBatteryLevelViews();
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
             updateBatteryLevels(titanoboaPacketReader.getPackets());
-            updateBatteryLevelView();
+            updateBatteryLevelViews();
         }
     }
     /**
@@ -508,9 +531,11 @@ public class TitanoboaControlActivity extends Activity {
     /**
     Update the batteryLevelView based on the currently selected module
      */
-    public void updateBatteryLevelView(){
-        TitanoboaModule selectedModule = modules.get(getSelectedModule());
-        batteryLevelView.setText(Integer.toString(selectedModule.getBatteryLevel()));
+    public void updateBatteryLevelViews(){
+        //TitanoboaModule selectedModule = modules.get(getSelectedModule()-1);
+        //batteryLevelView.setText(Integer.toString(selectedModule.getBatteryLevel()));
+        ListView listView = (ListView) findViewById(R.id.moduleList);
+        //for every module in the listView, set its text to the corresponding module's battery level
     }
 
 }

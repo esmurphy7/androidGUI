@@ -64,6 +64,7 @@
     </RelativeLayout>
 
     <ListView
+        android:id="@+id/moduleList"
         android:layout_width="match_parent"
         android:layout_height="293dp"
         android:orientation="vertical"
