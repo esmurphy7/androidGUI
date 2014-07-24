@@ -57,8 +57,9 @@ public class TitanoboaModule implements Module {
 		this.batteryLevel = batteryLevel;
 	}
 
-    public int getBatteryLevelAsPercent(){
-        return (MAX_BATTERY_LEVEL/batteryLevel)*100;
+    public double getBatteryLevelAsPercent(){
+        double percent = ((double)batteryLevel/(double)MAX_BATTERY_LEVEL)*100;
+        return percent;
     }
 
     @Override

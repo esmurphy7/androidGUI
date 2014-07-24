@@ -39,7 +39,7 @@ public class Simulation extends Thread implements Runnable{
     }
 
     private class Battery {
-        private int MAX_VOLTAGE = 1000;
+        private int MAX_VOLTAGE = 25000;
         private double DECAY_RATE = 0.9; //20% decay per call
 
         private int batteryLevel;
