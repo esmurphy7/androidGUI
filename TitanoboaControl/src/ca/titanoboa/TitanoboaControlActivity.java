@@ -3,15 +3,16 @@ package ca.titanoboa;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.shapes.Shape;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -38,7 +39,7 @@ public class TitanoboaControlActivity extends Activity {
 
     //=========== Constants =======================
     public static final int NUMBER_OF_MODULES = 5;
-    public static final int UPDATE_DELAY = 1; // how often data updates, in ms
+    public static final int UPDATE_DELAY = 1000; // how often data updates, in ms
 
     //=========== Attributes =======================
 	private ArrayList<TitanoboaModule> modules;
@@ -50,6 +51,7 @@ public class TitanoboaControlActivity extends Activity {
 	private int selectedModule;
 	private boolean screenSizeIsXLarge;
     private boolean isSimulation;
+    private ScheduledExecutorService simulationThread;
     private Simulation simulation;
 
     //=========== Views =======================
@@ -99,19 +101,22 @@ public class TitanoboaControlActivity extends Activity {
 			setupTitanoboaModelNormal();
 		}
 
-        //receive the intent passed by the configPromptActivity to check if this should be treated as a simulation environment
+        //receive the intent passed by the configPromptActivity to check if this should be treated as a simulationThread environment
         Intent intent = getIntent();
         isSimulation = intent.getBooleanExtra(ConfigPromptActivity.IS_SIMULATION, false);
 
-        //run simulation thread if simulation environment has been selected, otherwise run standard reader thread
+        //run simulationThread thread if simulationThread environment has been selected, otherwise run standard reader thread
         if(isSimulation){
+            //init thread to execute simulation runnable every 1000 milliseconds
             simulation = new Simulation();
-            simulation.start();
+            simulationThread = Executors.newSingleThreadScheduledExecutor();
+            simulationThread.scheduleAtFixedRate(simulation, 0, UPDATE_DELAY, TimeUnit.MILLISECONDS);
+            //init the ui updater thread
             uiUpdateHandler = new Handler();
             uiUpdateTask = new UIUpdateTask();
             uiUpdateHandler.removeCallbacks(uiUpdateTask);
             uiUpdateHandler.post(uiUpdateTask);
-        }else {
+        } else {
             titanoboaPacketReader = new TitanoboaPacketReader();
             // Packet reader is started via Connect button
             packetReaderThreadStarted = false;
@@ -534,7 +539,7 @@ public class TitanoboaControlActivity extends Activity {
         }
     }
     /**
-    Update the batteryLevelViews
+    Update the batteryLevelViews based on the modules' battery levels
      */
     public void updateBatteryLevelViews(){
         //TitanoboaModule selectedModule = modules.get(getSelectedModule()-1);
@@ -544,12 +549,12 @@ public class TitanoboaControlActivity extends Activity {
         //for every module in the listView, set its text/background/number, to the corresponding module's battery level
         for(TitanoboaModule module : modules) {
             View moduleView = listView.getChildAt(module.getModuleNumber() - 1 - listView.getFirstVisiblePosition());
-            GradientDrawable gradient = (GradientDrawable)getResources().getDrawable(R.drawable.gradient);
             Rect rect = new Rect(moduleView.getLeft(), moduleView.getTop(), moduleView.getRight(), moduleView.getBottom());
             int left = moduleView.getLeft();
             int top = moduleView.getTop();
             int right = moduleView.getRight();
             int bottom = moduleView.getBottom();
+            GradientDrawable gradient = (GradientDrawable)getResources().getDrawable(R.drawable.gradient);
             //get modules battery level as percentage
             //adjust gradient resource's length and color to match batterylevel %
             //give the module new gradient resource
@@ -565,7 +570,7 @@ public class TitanoboaControlActivity extends Activity {
                 gradient.setColor(Color.GREEN);
             }
             int newRight = right-(right*50/100);
-            gradient.setBounds(left, top, newRight, bottom);
+            gradient.setGradientCenter(left, newRight);
             moduleView.setBackground(gradient);
             //moduleView.setBackgroundResource(R.drawable.gradient);
         }

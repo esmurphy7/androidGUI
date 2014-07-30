@@ -10,11 +10,13 @@ import ca.titanoboa.packet.TitanoboaHeadAndModuleGeneralPacket;
 /**
  * Created by Evan Murphy on 7/22/2014.
  */
-public class Simulation extends Thread implements Runnable{
+public class Simulation implements Runnable {
 
     public static final String HEAD_AND_MODULE_KEY = "headAndModule";
     private final int MODULE_BATTERY_VOLTAGE_FIRST_INDEX = 4;
     private final int PACKET_SIZE = 125;
+    private final int UPDATE_DELAY_MILLI = 1000;
+
     private Map<String, Packet> packets;
     private Battery battery;
 
@@ -33,23 +35,23 @@ public class Simulation extends Thread implements Runnable{
         byte[] rawPacket = new byte[PACKET_SIZE];
         new Random().nextBytes(rawPacket);
         TitanoboaHeadAndModuleGeneralPacket generalPacket = new TitanoboaHeadAndModuleGeneralPacket(rawPacket);
-        //battery.decay();
+        battery.decay();
         //generalPacket.setBatteryLevel(battery.batteryLevel);
         packets.put(HEAD_AND_MODULE_KEY, new TitanoboaHeadAndModuleGeneralPacket(rawPacket));
     }
 
     private class Battery {
         private int MAX_VOLTAGE = 25000;
-        private double DECAY_RATE = 0.9; //20% decay per call
+        private double DECAY_RATE = 0.9; //10% decay per call
 
-        private int batteryLevel;
+        private double batteryLevel;
 
         public Battery(){
             batteryLevel = MAX_VOLTAGE;
         }
 
         public void decay(){
-            batteryLevel = (int)(batteryLevel*DECAY_RATE);
+            batteryLevel = (batteryLevel*DECAY_RATE);
         }
     }
 
